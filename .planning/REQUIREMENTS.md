@@ -72,11 +72,24 @@
 
 ## Traceability
 
-（由 roadmap 填入 — 每個 REQ-ID 對應到哪個 Phase）
-
-| REQ-ID | Phase |
-|--------|-------|
-| INPUT-01 ~ INPUT-05 | — |
-| SCHED-01 ~ SCHED-05 | — |
-| DISP-01 ~ DISP-04 | — |
-| AUTH-01 ~ AUTH-05 | — |
+| REQ-ID | Phase | Status |
+|--------|-------|--------|
+| INPUT-01 | Phase 1 | Pending |
+| INPUT-02 | Phase 1 | Pending |
+| INPUT-03 | Phase 1 | Pending |
+| INPUT-04 | Phase 1 | Pending |
+| SCHED-01 | Phase 2 | Pending |
+| SCHED-02 | Phase 2 | Pending |
+| SCHED-03 | Phase 2 | Pending |
+| SCHED-04 | Phase 2 | Pending |
+| SCHED-05 | Phase 2 | Pending |
+| DISP-01 | Phase 3 | Pending |
+| DISP-02 | Phase 3 | Pending |
+| DISP-03 | Phase 3 | Pending |
+| DISP-04 | Phase 3 | Pending |
+| AUTH-01 | Phase 3 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 4 | Pending |
+| AUTH-05 | Phase 4 | Pending |
+| INPUT-05 | Phase 5 | Pending |
