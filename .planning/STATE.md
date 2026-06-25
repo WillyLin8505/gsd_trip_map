@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: foundation-api-integration
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-06-25T14:43:11.845Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-06-25T14:51:31.982Z"
 last_activity: 2026-06-25
 last_activity_desc: Phase 01 execution started
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 01 (foundation-api-integration) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-06-25 — Phase 01 execution started
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Recent Trend:** No data yet
 | Phase 01 P01 | 19 | 4 tasks | 16 files |
+| Phase 01 P02 | 4 | - tasks | - files |
 
 ## Accumulated Context
 
@@ -67,6 +68,9 @@ Recent decisions affecting current work:
 - [Phase ?]: Drizzle ORM over Prisma for 7x faster cold start in serverless
 - [Phase ?]: Google Places API (New) only at places.googleapis.com/v1 — never legacy /maps/api/place/
 - [Phase ?]: city required in resolve request to enforce locationBias and prevent cross-city name ambiguity
+- [Phase ?]: itineraries.city + region added in Phase 1 for locationBias today and cross-city clustering in v2 without migration
+- [Phase ?]: getUser() calls supabase.auth.getUser() (network-validated) not session.user (stale/spoofable)
+- [Phase ?]: RLS policy names match RESEARCH.md exactly for stable downstream reference
 
 ### Pending Todos
 
@@ -80,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-25T14:43:11.803Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-06-25T14:51:31.952Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
