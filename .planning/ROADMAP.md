@@ -53,7 +53,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. The system auto-suggests a number of days derived from total visit durations plus estimated travel time; a caller-supplied day count overrides the suggestion.
   5. A test suite with at least three representative itinerary scenarios (small/medium/large N, mix of opening-hour constraints) passes and produces known-correct day groupings.
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 
 **Wave 1**
 
@@ -61,7 +61,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 02-02-PLAN.md — Day-count suggestion + day-split + time scheduling + optimize() orchestrator + 3 scenario tests
+- [x] 02-02-PLAN.md — Day-count suggestion + day-split + time scheduling + optimize() orchestrator + 3 scenario tests
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -122,7 +122,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
-| 2. Optimization Engine | 1/3 | In Progress|  |
+| 2. Optimization Engine | 2/3 | In Progress|  |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
 | 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |
