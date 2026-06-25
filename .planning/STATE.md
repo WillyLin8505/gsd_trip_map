@@ -4,11 +4,11 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 01
 current_phase_name: foundation-api-integration
-status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-06-25T15:07:53.166Z"
+status: phase-complete
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-06-25T15:30:00.000Z"
 last_activity: 2026-06-25
-last_activity_desc: Phase 01 execution started
+last_activity_desc: Phase 01 all 4 plans complete — open blocker T-01-13 (GCP cost controls partial)
 progress:
   total_phases: 5
   completed_phases: 1
@@ -28,12 +28,12 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 01 (foundation-api-integration) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-06-25 — Phase 01 execution started
+Phase: 01 (foundation-api-integration) — COMPLETE
+Plan: 4 of 4 (all plans done)
+Status: Phase complete — ready for Phase 02
+Last activity: 2026-06-25 — Phase 01 all 4 plans complete
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -80,12 +80,13 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 1]: Google Maps short URL parsing (redirect resolution) is LOW confidence in research — needs implementation spike
-- [Phase 1]: Opening hours coverage rate for Taiwanese attractions is unknown — validate empirically early
+- [Phase 1 RESOLVED]: Google Maps short URL parsing implemented and tested via redirect-follow + coordinate extraction (01-04)
+- [Phase 1 OPEN — pre-production blocker]: T-01-13: GCP billing alerts ($10/$50/$100), hard daily Places API quota cap, and API key restrictions not configured — operator skipped these in Task 4. Must complete docs/cost-controls.md steps 1-3 before sending user traffic.
+- [Phase 1]: Opening hours coverage rate for Taiwanese attractions is unknown — validate empirically early in Phase 2/3
 - [Phase 2]: Cross-city geographic clustering deferred to v2 — ensure data model supports it to avoid schema migrations
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:07:37.989Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-06-25T15:30:00.000Z
+Stopped at: Completed 01-04-PLAN.md — Phase 01 complete (open blocker: T-01-13 cost controls)
 Resume file: None
