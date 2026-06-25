@@ -1,0 +1,1 @@
+{"content":"Next.js 15 App Router is the default for new projects. App Router is now stable. For auth-heavy apps, Pages Router still viable but App Router + Clerk/Auth.js is well-supported. Route Handlers replace API Routes in App Router.","source":"web","provider":"websearch","confidence":"MEDIUM","fetched_at":"2026-06-25T00:38:37.378Z","ttl":86400000,"kind":"web"}
