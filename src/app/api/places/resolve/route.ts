@@ -1,24 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { resolveRequestSchema, type ResolvedPlace, type ErrorResponse } from "@/lib/validation/resolve";
 import { textSearch, type LocationBias } from "@/lib/google/places-client";
+import { resolveMapsUrl } from "@/lib/google/url-resolver";
 import { db } from "@/lib/db";
 import { places } from "@/lib/db/schema";
-import { eq, sql } from "drizzle-orm";
 
 /**
  * POST /api/places/resolve
  *
- * Resolves Chinese place names to structured place data using Google Places API (New).
- * Each resolved result is upserted into the shared places cache table.
+ * Resolves Chinese place names OR Google Maps URLs to structured place data
+ * using Google Places API (New). Each resolved result is upserted into the
+ * shared places cache table.
+ *
+ * Input routing:
+ * - URL inputs (starting with "http"): routed through resolveMapsUrl() which
+ *   follows redirects and extracts coordinates for a circle-restricted Text Search.
+ * - Text inputs: routed through textSearch() with city-based locationBias.
+ *
+ * Both paths upsert into places and return the same { placeId, displayName,
+ * formattedAddress, lat, lng } shape. A null resolution yields a per-input
+ * NOT_FOUND marker rather than failing the whole request.
  *
  * Security (threat model):
  * - T-01-01: GOOGLE_PLACES_API_KEY read from process.env (server-only). Never exposed to browser.
  * - T-01-02: Zod validation rejects malformed inputs and missing city with a 400.
- * - T-01-03: textSearch() always sends X-Goog-FieldMask (Essentials SKU only).
+ * - T-01-03: textSearch() and resolveMapsUrl() always send X-Goog-FieldMask (Essentials SKU).
  * - T-01-04: locationBias applied on every Text Search (city required by schema).
- *
- * Note: URL input handling is deferred to Plan 04. In this plan, all inputs are treated as text names.
+ * - T-01-14: URL inputs are resolved to coordinates only; response body is never rendered (SSRF mitigation).
+ * - T-01-15: API key is server-only, never referenced from client components.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   // Parse and validate request body (T-01-02)
@@ -50,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Build locationBias for textSearch
+  // Build locationBias for textSearch (text path only)
   const bias: LocationBias | undefined = locationBias
     ? {
         circle: {
@@ -60,25 +69,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     : undefined;
 
-  // Resolve each input
-  const results: ResolvedPlace[] = [];
+  // Resolve each input — URL inputs branch to resolveMapsUrl, text to textSearch
+  const results: Array<ResolvedPlace | { original_query: string; status: "NOT_FOUND" }> = [];
 
   for (const input of inputs) {
-    // Plan 04 will detect URLs (starts with 'http') and follow redirects.
-    // In this plan, all inputs are treated as text names.
-    const placeResult = await textSearch(input, {
-      city,
-      apiKey,
-      locationBias: bias,
-    });
+    let placeResult = null;
+
+    if (input.startsWith("http")) {
+      // URL path: follow redirect, extract coordinates, circle-restricted Text Search (T-01-14)
+      placeResult = await resolveMapsUrl(input, apiKey);
+    } else {
+      // Text path: city-based locationBias Text Search (T-01-04)
+      placeResult = await textSearch(input, {
+        city,
+        apiKey,
+        locationBias: bias,
+      });
+    }
 
     if (!placeResult) {
-      // Return a partial result with null indicator for this input
-      // Front-end can show "not found" for this entry
+      // Per-input NOT_FOUND marker — does not fail the whole request.
+      // original_query stored for future re-resolution (RESEARCH.md, schema place_visits.original_query).
+      results.push({
+        original_query: input,
+        status: "NOT_FOUND" as const,
+      });
       continue;
     }
 
-    // Upsert into the shared places cache (T-01-03 cost control: one DB write per unique place)
+    // Upsert into the shared places cache (one DB write per unique place)
     // On conflict of place_id, update the mutable fields and refresh updated_at
     await db
       .insert(places)
