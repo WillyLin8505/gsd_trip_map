@@ -6,7 +6,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 ## Phases
 
-- [ ] **Phase 1: Foundation + API Integration** - DB schema, Supabase auth scaffold, Google Places API with shared cache and cost controls
+- [x] **Phase 1: Foundation + API Integration** - DB schema, Supabase auth scaffold, Google Places API with shared cache and cost controls (completed 2026-06-25)
 - [ ] **Phase 2: Optimization Engine** - Server-side TSP scheduler (nearest-neighbor + 2-opt + greedy bin-packing) producing structured day-by-day output
 - [ ] **Phase 3: Core UI** - Full end-to-end anonymous user flow: PlaceInput, ItineraryView, MapView, mobile-responsive layout
 - [ ] **Phase 4: Auth + Persistence + Sharing** - User accounts (email + Google OAuth), saved itineraries, public share links
@@ -28,7 +28,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. The destination city field is applied as a locationBias on every Text Search call, so "故宮" resolves to the correct city's result.
   5. GCP billing alerts and daily quota cap are active; the Supabase schema (users, itineraries, itinerary_days, place_visits, places) is seeded and RLS policies are in place.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **Wave 1**
 
 - [x] 01-01-PLAN.md — Walking Skeleton: scaffold + places cache + Text Search resolve + UI form end-to-end (SKELETON.md)
@@ -37,7 +37,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 - [x] 01-02-PLAN.md — Full schema (itineraries/days/visits) + RLS policies + Supabase auth scaffold
 - [x] 01-03-PLAN.md — Cache-first GET /api/places/details + duration table + hours_unknown rule
-- [ ] 01-04-PLAN.md — Google Maps URL resolution + GCP cost controls (billing alerts + daily quota cap)
+- [x] 01-04-PLAN.md — Google Maps URL resolution + GCP cost controls (billing alerts + daily quota cap)
 
 ### Phase 2: Optimization Engine
 
@@ -109,7 +109,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + API Integration | 3/4 | In Progress|  |
+| 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
 | 2. Optimization Engine | 0/? | Not started | - |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
