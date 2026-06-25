@@ -9,10 +9,10 @@
 
 ### Input（地點輸入）
 
-- [ ] **INPUT-01**: 使用者可貼上多行文字清單，每行一個地點（中文名稱）
+- [x] **INPUT-01**: 使用者可貼上多行文字清單，每行一個地點（中文名稱）
 - [ ] **INPUT-02**: 使用者可貼上 Google Maps 連結（短網址或完整網址），系統自動解析為地點
-- [ ] **INPUT-03**: 使用者可設定旅遊目的地城市 / 地區，作為搜尋的地理範圍限制
-- [ ] **INPUT-04**: 系統透過 Google Places API (New) 自動帶入每個地點的名稱、地址、座標、營業時間、門票資訊
+- [x] **INPUT-03**: 使用者可設定旅遊目的地城市 / 地區，作為搜尋的地理範圍限制
+- [x] **INPUT-04**: 系統透過 Google Places API (New) 自動帶入每個地點的名稱、地址、座標、營業時間、門票資訊
 - [ ] **INPUT-05**: 使用者可手動調整每個地點的建議遊覽時長（系統預設依地點類型估算）
 
 ### Scheduling（行程排程）
@@ -64,6 +64,7 @@
 ## Definition of Done
 
 每個 v1 requirement 被視為完成的標準：
+
 - 使用者在瀏覽器中可以實際操作該功能
 - 功能在手機瀏覽器上可正常使用
 - 核心 happy path 有自動化測試覆蓋
@@ -74,10 +75,10 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| INPUT-01 | Phase 1 | Pending |
+| INPUT-01 | Phase 1 | Complete |
 | INPUT-02 | Phase 1 | Pending |
-| INPUT-03 | Phase 1 | Pending |
-| INPUT-04 | Phase 1 | Pending |
+| INPUT-03 | Phase 1 | Complete |
+| INPUT-04 | Phase 1 | Complete |
 | SCHED-01 | Phase 2 | Pending |
 | SCHED-02 | Phase 2 | Pending |
 | SCHED-03 | Phase 2 | Pending |

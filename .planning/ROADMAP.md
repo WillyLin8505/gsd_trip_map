@@ -28,10 +28,10 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. The destination city field is applied as a locationBias on every Text Search call, so "故宮" resolves to the correct city's result.
   5. GCP billing alerts and daily quota cap are active; the Supabase schema (users, itineraries, itinerary_days, place_visits, places) is seeded and RLS policies are in place.
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Walking Skeleton: scaffold + places cache + Text Search resolve + UI form end-to-end (SKELETON.md)
+- [x] 01-01-PLAN.md — Walking Skeleton: scaffold + places cache + Text Search resolve + UI form end-to-end (SKELETON.md)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -109,7 +109,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + API Integration | 0/4 | Planned | - |
+| 1. Foundation + API Integration | 1/4 | In Progress|  |
 | 2. Optimization Engine | 0/? | Not started | - |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
