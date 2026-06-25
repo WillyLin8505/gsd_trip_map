@@ -25,7 +25,11 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   3. A Google Maps short URL or full URL submitted to the resolve endpoint returns the correct place details.
   4. The destination city field is applied as a locationBias on every Text Search call, so "故宮" resolves to the correct city's result.
   5. GCP billing alerts and daily quota cap are active; the Supabase schema (users, itineraries, itinerary_days, place_visits, places) is seeded and RLS policies are in place.
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 01-01-PLAN.md — Walking Skeleton: scaffold + places cache + Text Search resolve + UI form end-to-end (SKELETON.md)
+- [ ] 01-02-PLAN.md — Full schema (itineraries/days/visits) + RLS policies + Supabase auth scaffold
+- [ ] 01-03-PLAN.md — Cache-first GET /api/places/details + duration table + hours_unknown rule
+- [ ] 01-04-PLAN.md — Google Maps URL resolution + GCP cost controls (billing alerts + daily quota cap)
 
 ### Phase 2: Optimization Engine
 **Goal**: A server-side optimizer accepts a resolved place list and produces a validated, structured day-by-day schedule that respects opening hours, minimizes travel distance, and assigns concrete arrival/departure times.
@@ -85,7 +89,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + API Integration | 0/? | Not started | - |
+| 1. Foundation + API Integration | 0/4 | Planned | - |
 | 2. Optimization Engine | 0/? | Not started | - |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
