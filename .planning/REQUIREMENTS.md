@@ -19,8 +19,8 @@
 
 - [ ] **SCHED-01**: 系統根據地點總數和遊覽時長，自動建議所需天數
 - [ ] **SCHED-02**: 使用者可自行指定旅遊天數（覆蓋自動建議）
-- [ ] **SCHED-03**: 系統根據地理距離最短原則排列同天景點順序
-- [ ] **SCHED-04**: 系統考慮各地點營業時間，避免排入未開放時段
+- [x] **SCHED-03**: 系統根據地理距離最短原則排列同天景點順序
+- [x] **SCHED-04**: 系統考慮各地點營業時間，避免排入未開放時段
 - [ ] **SCHED-05**: 系統為每個地點分配具體的到達時間和離開時間
 
 ### Display（結果顯示）
@@ -81,8 +81,8 @@
 | INPUT-04 | Phase 1 | Complete |
 | SCHED-01 | Phase 2 | Pending |
 | SCHED-02 | Phase 2 | Pending |
-| SCHED-03 | Phase 2 | Pending |
-| SCHED-04 | Phase 2 | Pending |
+| SCHED-03 | Phase 2 | Complete |
+| SCHED-04 | Phase 2 | Complete |
 | SCHED-05 | Phase 2 | Pending |
 | DISP-01 | Phase 3 | Pending |
 | DISP-02 | Phase 3 | Pending |
