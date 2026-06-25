@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 current_phase_name: optimization-engine
-status: executing
+status: verifying
 stopped_at: Verified 01-VERIFICATION.md — status human_needed (5 items require runtime/operator confirmation)
-last_updated: "2026-06-25T15:57:37.148Z"
+last_updated: "2026-06-25T16:08:21.292Z"
 last_activity: 2026-06-25
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
-  percent: 20
+  completed_plans: 7
+  percent: 40
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 Phase: 02 (optimization-engine) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-06-25 — Phase 02 execution started
 
 Progress: [██████████] 100%
@@ -69,6 +69,7 @@ Progress: [██████████] 100%
 | Phase 01 P04 | 5 | 3 tasks | 4 files |
 | Phase 02 P01 | 5 | 2 tasks | 5 files |
 | Phase 02 P02 | 7 | 2 tasks | 5 files |
+| Phase 02 P03 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,10 @@ Recent decisions affecting current work:
 - [Phase ?]: routeTravelTime is open path (no return-to-origin) — itineraries end at last stop
 - [Phase ?]: getOpenWindow() extracts concrete openTime/closeTime for arithmetic; separate from isOpenAt() boolean
 - [Phase ?]: splitIntoDays null-sentinel for overflow mode
+- [Phase ?]: Optimizer never treats infeasible pairs as zero-cost travel
+- [Phase ?]: Semantically more correct than 400; callers know exactly what to resolve first
+- [Phase ?]: Same GCP server key for both Places and Routes APIs — one env var, same billing account (02-CONTEXT.md)
+- [Phase ?]: Text-resolved places without detail fetch always get a valid duration in OptimizerPlace
 
 ### Pending Todos
 
@@ -110,6 +115,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-25T15:57:33.182Z
+Last session: 2026-06-25T16:08:21.248Z
 Stopped at: Phase 01 verification — human_needed. Next step: complete human verification checklist (especially GCP cost controls T-01-13), then advance to Phase 02.
 Resume file: None

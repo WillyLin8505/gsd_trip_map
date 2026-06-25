@@ -7,7 +7,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 ## Phases
 
 - [x] **Phase 1: Foundation + API Integration** - DB schema, Supabase auth scaffold, Google Places API with shared cache and cost controls (completed 2026-06-25)
-- [ ] **Phase 2: Optimization Engine** - Server-side TSP scheduler (nearest-neighbor + 2-opt + greedy bin-packing) producing structured day-by-day output
+- [x] **Phase 2: Optimization Engine** - Server-side TSP scheduler (nearest-neighbor + 2-opt + greedy bin-packing) producing structured day-by-day output (completed 2026-06-25)
 - [ ] **Phase 3: Core UI** - Full end-to-end anonymous user flow: PlaceInput, ItineraryView, MapView, mobile-responsive layout
 - [ ] **Phase 4: Auth + Persistence + Sharing** - User accounts (email + Google OAuth), saved itineraries, public share links
 - [ ] **Phase 5: Polish + Edit + Cost Hardening** - Manual visit duration override, rate limiting, mobile polish, per-user API call cap
@@ -53,7 +53,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. The system auto-suggests a number of days derived from total visit durations plus estimated travel time; a caller-supplied day count overrides the suggestion.
   5. A test suite with at least three representative itinerary scenarios (small/medium/large N, mix of opening-hour constraints) passes and produces known-correct day groupings.
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 **Wave 1**
 
@@ -65,7 +65,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 02-03-PLAN.md — Routes API computeRouteMatrix client + POST /api/optimize Route Handler (end-to-end slice)
+- [x] 02-03-PLAN.md — Routes API computeRouteMatrix client + POST /api/optimize Route Handler (end-to-end slice)
 
 ### Phase 3: Core UI
 
@@ -122,7 +122,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
-| 2. Optimization Engine | 2/3 | In Progress|  |
+| 2. Optimization Engine | 3/3 | Complete   | 2026-06-25 |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
 | 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |
