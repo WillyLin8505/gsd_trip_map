@@ -53,7 +53,19 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. The system auto-suggests a number of days derived from total visit durations plus estimated travel time; a caller-supplied day count overrides the suggestion.
   5. A test suite with at least three representative itinerary scenarios (small/medium/large N, mix of opening-hour constraints) passes and produces known-correct day groupings.
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Pure optimizer core: types + timezone-correct isOpenAt() + nearestNeighbor/2-opt route construction
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 02-02-PLAN.md — Day-count suggestion + day-split + time scheduling + optimize() orchestrator + 3 scenario tests
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 02-03-PLAN.md — Routes API computeRouteMatrix client + POST /api/optimize Route Handler (end-to-end slice)
 
 ### Phase 3: Core UI
 
@@ -110,7 +122,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
-| 2. Optimization Engine | 0/? | Not started | - |
+| 2. Optimization Engine | 0/3 | Planned | - |
 | 3. Core UI | 0/? | Not started | - |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
 | 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |
