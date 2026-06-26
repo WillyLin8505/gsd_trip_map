@@ -21,6 +21,7 @@
  * T-03-12: coordMap.get() guarded by ?? 0 (undefined → fallback, no thrown access)
  */
 
+import type { ReactNode } from "react";
 import { ItineraryView } from "@/components/itinerary-view";
 import { UnscheduledAlert } from "@/components/unscheduled-alert";
 import { MapView } from "@/components/map-view-wrapper";
@@ -40,6 +41,15 @@ interface ResultsLayoutProps {
   detailsById?: Map<string, PlaceDetail>;
   /** INPUT-05: forwarded to ItineraryView to enable inline duration editing */
   onDurationChange?: (placeId: string, minutes: number) => void;
+  /**
+   * F2: forwarded to ItineraryView → DayCard to render per-day 「自動安排」 button.
+   */
+  onAutoArrange?: (dayNumber: number) => Promise<void>;
+  /**
+   * F1: DayPlaceAdder rendered at the top of the itinerary column.
+   * Passed as a slot so place-input-panel owns the add-place state/handlers.
+   */
+  dayPlaceAdder?: ReactNode;
 }
 
 /**
@@ -72,6 +82,8 @@ export function ResultsLayout({
   resolvedPlaces,
   detailsById,
   onDurationChange,
+  onAutoArrange,
+  dayPlaceAdder,
 }: ResultsLayoutProps) {
   // Build coordinate-joined days for MapView (coordinate gap join)
   const daysWithCoords = buildDaysWithCoords(itinerary, resolvedPlaces);
@@ -102,10 +114,13 @@ export function ResultsLayout({
           </TabsList>
 
           <TabsContent value="itinerary">
+            {/* F1: DayPlaceAdder at the top of the itinerary column (mobile) */}
+            {dayPlaceAdder}
             <ItineraryView
               itinerary={itinerary}
               detailsById={detailsById}
               onDurationChange={onDurationChange}
+              onAutoArrange={onAutoArrange}
             />
           </TabsContent>
 
@@ -126,10 +141,13 @@ export function ResultsLayout({
         {/* Itinerary panel: fixed 420px width, scrollable */}
         <div className="w-[420px] flex-shrink-0">
           <ScrollArea className="h-[calc(100vh-160px)]">
+            {/* F1: DayPlaceAdder at the top of the itinerary column (desktop) */}
+            {dayPlaceAdder && <div className="mb-3">{dayPlaceAdder}</div>}
             <ItineraryView
               itinerary={itinerary}
               detailsById={detailsById}
               onDurationChange={onDurationChange}
+              onAutoArrange={onAutoArrange}
             />
           </ScrollArea>
         </div>

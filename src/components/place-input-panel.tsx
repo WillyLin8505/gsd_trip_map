@@ -8,13 +8,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ResolvedPlaceList } from "@/components/resolved-place-list";
 import { ResultsLayout } from "@/components/results-layout";
+import { DayPlaceAdder } from "@/components/day-place-adder";
 import { ProgressSteps } from "@/components/progress-steps";
 import { SaveItineraryButton } from "@/components/save-itinerary-button";
 import { usePlaceDetails } from "@/lib/places/use-place-details";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { buildOptimizeBody } from "@/lib/places/optimize-request";
 import type { ResolvedPlace } from "@/lib/validation/resolve";
-import type { OptimizeResult } from "@/types/itinerary";
+import type { OptimizeResult, ScheduledVisit } from "@/types/itinerary";
 
 /**
  * PlaceInputPanel — the top-level 3-step flow controller.
@@ -182,6 +183,61 @@ export function PlaceInputPanel() {
   }
 
   // ---------------------------------------------------------------------------
+  // F1/F2: Replace one day in the itinerary (Pitfall 5: preserve suggestedDays)
+  // ---------------------------------------------------------------------------
+  function replaceDay(
+    dayNumber: number,
+    newDay: { dayNumber: number; visits: ScheduledVisit[] }
+  ) {
+    setOptimizeResult((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        days: prev.days.map((d) => (d.dayNumber === dayNumber ? newDay : d)),
+      };
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // F2: Auto-arrange one day (reorder=true → POST /api/optimize/day → replaceDay)
+  // ---------------------------------------------------------------------------
+  async function handleAutoArrange(dayNumber: number): Promise<void> {
+    if (!optimizeResult) return;
+    const thatDay = optimizeResult.days.find((d) => d.dayNumber === dayNumber);
+    if (!thatDay) return;
+
+    const placeIds = thatDay.visits.map((v) => v.placeId);
+    if (placeIds.length === 0) return;
+
+    const body: Record<string, unknown> = {
+      placeIds,
+      reorder: true,
+      dayNumber,
+    };
+    if (startDate) {
+      body.travelDate = startDate;
+    }
+
+    const res = await fetch("/api/optimize/day", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      // DayCard handles its own error display via the thrown error from handleAutoArrange
+      throw new Error("自動安排失敗，請稍後再試");
+    }
+
+    const { day } = (await res.json()) as {
+      day: { dayNumber: number; visits: ScheduledVisit[] };
+      unscheduled: Array<{ placeId: string; reason: string }>;
+    };
+
+    replaceDay(dayNumber, day);
+  }
+
+  // ---------------------------------------------------------------------------
   // Reset to step 1
   // ---------------------------------------------------------------------------
   function handleReset() {
@@ -225,6 +281,17 @@ export function PlaceInputPanel() {
           resolvedPlaces={resolvedPlaces}
           detailsById={detailsById}
           onDurationChange={handleDurationChange}
+          onAutoArrange={handleAutoArrange}
+          dayPlaceAdder={
+            <DayPlaceAdder
+              resolvedCity={resolvedCity}
+              startDate={startDate}
+              optimizeResult={optimizeResult}
+              resolvedPlaces={resolvedPlaces}
+              replaceDay={replaceDay}
+              setResolvedPlaces={setResolvedPlaces}
+            />
+          }
         />
       </div>
     );

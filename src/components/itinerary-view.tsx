@@ -14,6 +14,11 @@ interface ItineraryViewProps {
   detailsById?: Map<string, PlaceDetail>;
   /** INPUT-05: forwarded to DayCard → PlaceRow to enable inline duration editing */
   onDurationChange?: (placeId: string, minutes: number) => void;
+  /**
+   * F2: forwarded to each DayCard to render the 「自動安排」 button.
+   * Called with the dayNumber when the user clicks the button.
+   */
+  onAutoArrange?: (dayNumber: number) => Promise<void>;
 }
 
 /**
@@ -28,7 +33,7 @@ interface ItineraryViewProps {
  *
  * AUTH-01: No auth imports.
  */
-export function ItineraryView({ itinerary, detailsById, onDurationChange }: ItineraryViewProps) {
+export function ItineraryView({ itinerary, detailsById, onDurationChange, onAutoArrange }: ItineraryViewProps) {
   // Check if ALL scheduled visits have hoursUnknown=true (using optimizer flag)
   const allVisits = itinerary.days.flatMap((d) => d.visits);
   const allHoursUnknown =
@@ -54,6 +59,7 @@ export function ItineraryView({ itinerary, detailsById, onDurationChange }: Itin
           day={day}
           detailsById={detailsById}
           onDurationChange={onDurationChange}
+          onAutoArrange={onAutoArrange}
         />
       ))}
     </div>
