@@ -4,11 +4,11 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 06
 current_phase_name: interactive-day-editing
-status: roadmapped
-stopped_at: Phase 6 added to ROADMAP; ready to plan
+status: planning
+stopped_at: Phase 6 planning paused at UI-SPEC gate — run /gsd-ui-phase 6 then /gsd-plan-phase 6
 last_updated: "2026-06-27"
 last_activity: 2026-06-27
-last_activity_desc: Phase 06 (interactive single-day editing) added to ROADMAP from sub-project C spec
+last_activity_desc: Phase 06 CONTEXT + RESEARCH + VALIDATION written; blocked on UI-SPEC gate (frontend phase)
 progress:
   total_phases: 6
   completed_phases: 5
