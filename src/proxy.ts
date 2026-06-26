@@ -9,7 +9,7 @@ import { updateSession } from "@/lib/supabase/middleware";
  *
  * The matcher excludes static assets and Next.js internals to avoid unnecessary work.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   return await updateSession(request);
 }
 
