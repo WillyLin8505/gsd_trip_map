@@ -149,7 +149,9 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   5. A failed day operation (API/resolve error, place NOT_FOUND, missing place_types) shows an inline message and keeps the existing itinerary intact — it is never wiped.
 
 **Out of scope**: AI-recommended places (Part B); persisting edits separately from the existing save flow; cross-day moves / drag-and-drop (v2).
-**Plans**: TBD
+**Plans**: 2 plans
+- [ ] 06-01-PLAN.md — Slice F1 (EDIT-01): add a pasted place to the geographically closest day end-to-end (pickClosestDay + scheduleSingleDay reorder=false + POST /api/optimize/day + DayPlaceAdder + replaceDay)
+- [ ] 06-02-PLAN.md — Slice F2 (EDIT-02): per-day 「自動安排」 end-to-end (classifyPlace + scheduleSingleDay reorder=true meal-slotting + DayCard button + onAutoArrange wiring)
 **UI hint**: yes
 
 ## Progress
