@@ -1,5 +1,5 @@
-import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
@@ -23,23 +23,28 @@ function resolveConnectionString(): string | null {
   return process.env.DATABASE_URL ?? null;
 }
 
-let cachedDb: PostgresJsDatabase | null = null;
+let cachedDb: NodePgDatabase | null = null;
 let cachedConn: string | null = null;
 
 /**
  * Returns the Drizzle client for the current request, or null when no DB is
- * configured. Request-scoped because the connection string on Cloudflare comes
- * from a per-request binding; cached per connection string so Node/Vercel reuse
- * a single client.
+ * configured.
  *
- * `prepare: false` keeps us compatible with poolers (Supabase pooler / Hyperdrive
- * transaction mode); `fetch_types: false` avoids an extra round trip on Workers.
+ * Uses node-postgres (pg) — Cloudflare's primary documented Hyperdrive driver,
+ * which works on Workers under the `nodejs_compat` flag (postgres-js hangs on the
+ * Workers runtime). On Cloudflare the connection string is the Hyperdrive local
+ * proxy (no SSL); Hyperdrive itself does SSL to the Supabase origin. Off Cloudflare
+ * the string is DATABASE_URL (Supabase pooler, sslmode in the URL).
+ *
+ * connectionTimeoutMillis bounds connection attempts so a bad origin fails fast
+ * instead of hanging the Worker.
  */
-export function getDb(): PostgresJsDatabase | null {
+export function getDb(): NodePgDatabase | null {
   const conn = resolveConnectionString();
   if (!conn) return null;
   if (cachedDb && cachedConn === conn) return cachedDb;
-  cachedDb = drizzle(postgres(conn, { prepare: false, fetch_types: false, max: 5 }));
+  const pool = new Pool({ connectionString: conn, max: 5, connectionTimeoutMillis: 10_000 });
+  cachedDb = drizzle(pool);
   cachedConn = conn;
   return cachedDb;
 }
