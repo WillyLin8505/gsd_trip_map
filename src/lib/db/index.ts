@@ -1,12 +1,12 @@
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { cache } from "react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 /**
  * Resolve the Postgres connection string for the current runtime:
- * - Cloudflare (OpenNext): the Hyperdrive binding exposes a pooled connection
- *   string (env.HYPERDRIVE.connectionString). getCloudflareContext() throws
- *   outside a Cloudflare request, so we guard it.
+ * - Cloudflare (OpenNext): the Hyperdrive binding's pooled connection string.
+ *   getCloudflareContext() throws outside a Cloudflare request, so we guard it.
  * - Node / Vercel / local dev: process.env.DATABASE_URL.
  * Returns null when neither is configured (dev/test without a DB).
  */
@@ -23,28 +23,20 @@ function resolveConnectionString(): string | null {
   return process.env.DATABASE_URL ?? null;
 }
 
-let cachedDb: NodePgDatabase | null = null;
-let cachedConn: string | null = null;
-
 /**
  * Returns the Drizzle client for the current request, or null when no DB is
  * configured.
  *
- * Uses node-postgres (pg) — Cloudflare's primary documented Hyperdrive driver,
- * which works on Workers under the `nodejs_compat` flag (postgres-js hangs on the
- * Workers runtime). On Cloudflare the connection string is the Hyperdrive local
- * proxy (no SSL); Hyperdrive itself does SSL to the Supabase origin. Off Cloudflare
- * the string is DATABASE_URL (Supabase pooler, sslmode in the URL).
- *
- * connectionTimeoutMillis bounds connection attempts so a bad origin fails fast
- * instead of hanging the Worker.
+ * Per the OpenNext + Cloudflare guidance: do NOT keep a global/module-level DB
+ * client on Workers — reusing a connection across requests hangs the runtime
+ * ("code hung and would never generate a response"). React's cache() memoizes the
+ * client per request, and `maxUses: 1` ensures each pooled connection is used once
+ * and not carried into another request. Uses node-postgres (pg), Cloudflare's
+ * documented Hyperdrive driver (works under nodejs_compat; postgres-js hangs).
  */
-export function getDb(): NodePgDatabase | null {
+export const getDb = cache((): NodePgDatabase | null => {
   const conn = resolveConnectionString();
   if (!conn) return null;
-  if (cachedDb && cachedConn === conn) return cachedDb;
-  const pool = new Pool({ connectionString: conn, max: 5, connectionTimeoutMillis: 10_000 });
-  cachedDb = drizzle(pool);
-  cachedConn = conn;
-  return cachedDb;
-}
+  const pool = new Pool({ connectionString: conn, max: 5, maxUses: 1 });
+  return drizzle(pool);
+});
