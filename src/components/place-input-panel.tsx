@@ -12,6 +12,7 @@ import { ProgressSteps } from "@/components/progress-steps";
 import { SaveItineraryButton } from "@/components/save-itinerary-button";
 import { usePlaceDetails } from "@/lib/places/use-place-details";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { buildOptimizeBody } from "@/lib/places/optimize-request";
 import type { ResolvedPlace } from "@/lib/validation/resolve";
 import type { OptimizeResult } from "@/types/itinerary";
 
@@ -36,6 +37,10 @@ export function PlaceInputPanel() {
   const [resolvedPlaces, setResolvedPlaces] = useState<ResolvedPlace[]>([]);
   const [optimizeResult, setOptimizeResult] = useState<OptimizeResult | null>(null);
   const [durationOverrides, setDurationOverrides] = useState<Record<string, number>>({});
+  const [numDays, setNumDays] = useState<string>(""); // "" = 自動
+  const [startDate, setStartDate] = useState<string>(""); // YYYY-MM-DD ("" = 預設)
+  const [resolvedCity, setResolvedCity] = useState<string | null>(null);
+  const [cityInferred, setCityInferred] = useState<boolean>(false);
   const [loading, setLoading] = useState<"idle" | "resolving" | "optimizing">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -77,11 +82,6 @@ export function PlaceInputPanel() {
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
 
-    if (!city.trim()) {
-      setError("請輸入目的地城市");
-      return;
-    }
-
     if (inputs.length === 0) {
       setError("請輸入至少一個地點名稱");
       return;
@@ -92,28 +92,34 @@ export function PlaceInputPanel() {
       const response = await fetch("/api/places/resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inputs, city: city.trim() }),
+        body: JSON.stringify(city.trim() ? { inputs, city: city.trim() } : { inputs }),
       });
 
-      const data: unknown = await response.json();
+      const data = (await response.json()) as {
+        places?: Array<ResolvedPlace | { status: "NOT_FOUND"; original_query: string }>;
+        resolvedCity?: string | null;
+        cityInferred?: boolean;
+        error?: string;
+      };
 
       if (!response.ok) {
-        const errData = data as { error?: string };
-        setError(errData.error ?? "地點查詢失敗，請稍後再試");
+        setError(data.error ?? "地點查詢失敗，請稍後再試");
         return;
       }
 
       // Filter out NOT_FOUND markers; keep only fully-resolved places with lat/lng
-      const allItems = data as Array<ResolvedPlace | { status: "NOT_FOUND"; original_query: string }>;
+      const allItems = data.places ?? [];
       const resolved = allItems.filter(
         (item): item is ResolvedPlace => !("status" in item && item.status === "NOT_FOUND")
       );
 
       if (resolved.length === 0) {
-        setError("沒有找到符合的地點，請檢查輸入內容或城市名稱");
+        setError("沒有找到符合的地點，請檢查輸入內容");
         return;
       }
 
+      setResolvedCity(data.resolvedCity ?? null);
+      setCityInferred(Boolean(data.cityInferred));
       setResolvedPlaces(resolved);
     } catch {
       setError("網路錯誤，請稍後再試");
@@ -137,14 +143,17 @@ export function PlaceInputPanel() {
     setLoading("optimizing");
 
     try {
-      const hasOverrides = Object.keys(overrides).length > 0;
       const response = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          placeIds: resolvedPlaces.map((p) => p.placeId),
-          ...(hasOverrides ? { durationOverrides: overrides } : {}),
-        }),
+        body: JSON.stringify(
+          buildOptimizeBody({
+            placeIds: resolvedPlaces.map((p) => p.placeId),
+            numDays: numDays ? Number(numDays) : null,
+            travelDate: startDate || null,
+            durationOverrides: overrides,
+          })
+        ),
       });
 
       const data: unknown = await response.json();
@@ -181,6 +190,10 @@ export function PlaceInputPanel() {
     setResolvedPlaces([]);
     setOptimizeResult(null);
     setDurationOverrides({});
+    setNumDays("");
+    setStartDate("");
+    setResolvedCity(null);
+    setCityInferred(false);
     setError(null);
     setLoading("idle");
   }
@@ -241,6 +254,25 @@ export function PlaceInputPanel() {
           </Alert>
         )}
 
+        {resolvedCity && (
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-muted-foreground">
+              目的地：<span className="font-medium text-foreground">{resolvedCity}</span>
+              {cityInferred && <span className="ml-1 text-amber-600">（AI 自動判斷）</span>}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setCity(resolvedCity);
+                setResolvedPlaces([]);
+              }}
+            >
+              修改城市重新查詢
+            </Button>
+          </div>
+        )}
+
         <ResolvedPlaceList
           places={resolvedPlaces}
           onRemove={handleRemovePlace}
@@ -276,7 +308,7 @@ export function PlaceInputPanel() {
   // ---------------------------------------------------------------------------
   // Step 1: input form
   // ---------------------------------------------------------------------------
-  const isResolveDisabled = !city.trim() || !rawInputs.trim() || loading === "resolving";
+  const isResolveDisabled = !rawInputs.trim() || loading === "resolving";
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -292,25 +324,23 @@ export function PlaceInputPanel() {
           </Alert>
         )}
 
-        {/* City input — INPUT-03 */}
+        {/* City input — optional; AI infers it when left blank */}
         <div className="space-y-1.5">
           <label
             htmlFor="city"
             className="block text-sm font-medium text-foreground"
           >
-            目的地城市 <span className="text-destructive">*</span>
+            目的地城市（選填）
           </label>
           <Input
             id="city"
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            placeholder="例如：台北市、高雄市、京都市"
+            placeholder="留空將由 AI 自動判斷"
             aria-label="目的地城市"
-            aria-required="true"
             className="h-11"
           />
-          <p className="text-sm text-muted-foreground">必填，用於縮小地點搜尋範圍</p>
         </div>
 
         {/* Place list textarea — INPUT-01 */}
@@ -336,6 +366,37 @@ export function PlaceInputPanel() {
               <span className="ml-1">· 將查詢 {pendingPlaceCount} 個地點</span>
             )}
           </p>
+        </div>
+
+        {/* Days + start date (optional) */}
+        <div className="flex gap-3">
+          <div className="space-y-1.5 flex-1">
+            <label htmlFor="numDays" className="block text-sm font-medium text-foreground">
+              待幾天（選填）
+            </label>
+            <Input
+              id="numDays"
+              type="number"
+              min={1}
+              max={30}
+              value={numDays}
+              onChange={(e) => setNumDays(e.target.value)}
+              placeholder="自動"
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-1.5 flex-1">
+            <label htmlFor="startDate" className="block text-sm font-medium text-foreground">
+              開始日期（選填）
+            </label>
+            <Input
+              id="startDate"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="h-11"
+            />
+          </div>
         </div>
 
         {/* Resolve button */}
