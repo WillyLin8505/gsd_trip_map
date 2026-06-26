@@ -5,16 +5,16 @@ milestone_name: milestone
 current_phase: 06
 current_phase_name: interactive-day-editing
 status: executing
-stopped_at: Phase 6 planned (2 plans, plan-checker PASS); ready to execute
-last_updated: "2026-06-26T17:01:02.905Z"
+stopped_at: Phase 06 Plan 01 (F1 add-place) complete; ready for Plan 02 (F2 auto-arrange)
+last_updated: "2026-06-26T17:12:15Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 06 execution started
+last_activity_desc: Phase 06 Plan 01 executed — F1 end-to-end complete (pure primitives + route + UI)
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 15
-  completed_plans: 11
-  percent: 50
+  completed_plans: 12
+  percent: 56
 ---
 
 # Project State
@@ -130,6 +130,12 @@ Recent decisions affecting current work:
 - [03-04]: hoursUnknown in InfoWindow sourced from visit directly (not detailsById) — warning appears immediately before usePlaceDetails resolves
 - [03-04]: map-view-wrapper.tsx is the only import path for MapView — ssr:false gate prevents window-not-defined SSR crash
 - [03-04]: Coordinate gap join in ResultsLayout (buildDaysWithCoords) — coordMap from resolvedPlaces keyed by placeId
+- [06-01]: scheduleSingleDay reorder=true stubs with clear error — implemented in plan 06-02 (EDIT-02 / F2)
+- [06-01]: durationOverrides omitted from /api/optimize/day body (v1 known limitation — RESEARCH open question 1)
+- [06-01]: DayPlaceAdder rendered via dayPlaceAdder ReactNode slot in ResultsLayout — place-input-panel owns state
+- [06-01]: replaceDay is a functional setOptimizeResult updater — spreads prev and swaps only matching day (Pitfall 5: preserves suggestedDays)
+- [06-01]: nextMonday() inlined in day route (not exported from optimizer/index.ts) — required for ScheduleTimesOpts.travelDate default (Pitfall 3)
+- [06-01]: Per-day isArranging/arrangeError state local to DayCard — other days remain interactive during F2 arrange
 
 ### Pending Todos
 
@@ -147,10 +153,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-27
-Stopped at: Phase 6 (interactive-day-editing) fully planned and verified (plan-checker PASS). Ready to execute.
-Resume action: /gsd-execute-phase 6 — Wave 1 (06-01 F1 add-place) then Wave 2 (06-02 F2 auto-arrange)
-Resume file: .planning/phases/06-interactive-day-editing/06-01-PLAN.md
+Last session: 2026-06-26
+Stopped at: Phase 06 Plan 01 complete (F1 end-to-end: pickClosestDay + scheduleSingleDay(reorder=false) + POST /api/optimize/day + DayPlaceAdder + replaceDay). Plan 02 (F2 auto-arrange) is next.
+Resume action: /gsd-execute-phase 6 — execute Plan 02 (06-02 F2 auto-arrange / EDIT-02)
+Resume file: .planning/phases/06-interactive-day-editing/06-02-PLAN.md
 
 ### Phase 6 planning artifacts (all committed)
 

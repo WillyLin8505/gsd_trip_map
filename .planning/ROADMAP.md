@@ -149,9 +149,11 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   5. A failed day operation (API/resolve error, place NOT_FOUND, missing place_types) shows an inline message and keeps the existing itinerary intact — it is never wiped.
 
 **Out of scope**: AI-recommended places (Part B); persisting edits separately from the existing save flow; cross-day moves / drag-and-drop (v2).
-**Plans**: 2 plans
-- [ ] 06-01-PLAN.md — Slice F1 (EDIT-01): add a pasted place to the geographically closest day end-to-end (pickClosestDay + scheduleSingleDay reorder=false + POST /api/optimize/day + DayPlaceAdder + replaceDay)
+**Plans**: 1/2 plans executed
+
+- [x] 06-01-PLAN.md — Slice F1 (EDIT-01): add a pasted place to the geographically closest day end-to-end (pickClosestDay + scheduleSingleDay reorder=false + POST /api/optimize/day + DayPlaceAdder + replaceDay)
 - [ ] 06-02-PLAN.md — Slice F2 (EDIT-02): per-day 「自動安排」 end-to-end (classifyPlace + scheduleSingleDay reorder=true meal-slotting + DayCard button + onAutoArrange wiring)
+
 **UI hint**: yes
 
 ## Progress
@@ -163,4 +165,4 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | 3. Core UI | 4/4 | Complete   | 2026-06-26 |
 | 4. Auth + Persistence + Sharing | 4/4 | Code-complete (CI verify pending) | 2026-06-26 |
 | 5. Polish + Edit + Cost Hardening | 3/4 | Code-complete (375px walkthrough pending) | 2026-06-26 |
-| 6. Interactive Single-Day Editing | 0/? | Not planned | — |
+| 6. Interactive Single-Day Editing | 1/2 | In Progress|  |
