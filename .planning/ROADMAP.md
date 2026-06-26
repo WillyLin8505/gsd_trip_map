@@ -8,7 +8,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 - [x] **Phase 1: Foundation + API Integration** - DB schema, Supabase auth scaffold, Google Places API with shared cache and cost controls (completed 2026-06-25)
 - [x] **Phase 2: Optimization Engine** - Server-side TSP scheduler (nearest-neighbor + 2-opt + greedy bin-packing) producing structured day-by-day output (completed 2026-06-25)
-- [ ] **Phase 3: Core UI** - Full end-to-end anonymous user flow: PlaceInput, ItineraryView, MapView, mobile-responsive layout
+- [x] **Phase 3: Core UI** - Full end-to-end anonymous user flow: PlaceInput, ItineraryView, MapView, mobile-responsive layout (completed 2026-06-26)
 - [ ] **Phase 4: Auth + Persistence + Sharing** - User accounts (email + Google OAuth), saved itineraries, public share links
 - [ ] **Phase 5: Polish + Edit + Cost Hardening** - Manual visit duration override, rate limiting, mobile polish, per-user API call cap
 
@@ -81,7 +81,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. Places with unknown opening hours display a visible warning in both the itinerary table and map tooltip.
   5. The full flow (input → resolve → optimize → view) is usable on a mobile browser at 375px viewport width without horizontal scrolling or overlapping elements.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **UI hint**: yes
 
 **Wave 0** *(scaffolding — blocks all component work)*
@@ -98,7 +98,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 **Wave 3** *(blocked on Wave 2 — 03-04 depends on 03-03's place-input-panel.tsx edits)*
 
-- [ ] 03-04-PLAN.md — MapView (per-day polylines, numbered markers, InfoWindow) + responsive ResultsLayout (DISP-03, DISP-04)
+- [x] 03-04-PLAN.md — MapView (per-day polylines, numbered markers, InfoWindow) + responsive ResultsLayout (DISP-03, DISP-04)
 
 ### Phase 4: Auth + Persistence + Sharing
 
@@ -139,6 +139,6 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 |-------|----------------|--------|-----------|
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
 | 2. Optimization Engine | 3/3 | Complete   | 2026-06-25 |
-| 3. Core UI | 3/4 | In Progress|  |
+| 3. Core UI | 4/4 | Complete   | 2026-06-26 |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
 | 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |

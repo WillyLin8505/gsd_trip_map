@@ -4,11 +4,11 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 03
 current_phase_name: core-ui
-status: executing
-stopped_at: Phase 3 plans verified — ready for execution
-last_updated: "2026-06-26T14:02:00.000Z"
+status: complete
+stopped_at: Completed 03-04-PLAN.md (MapView + responsive ResultsLayout — DISP-03 + DISP-04)
+last_updated: "2026-06-26T14:20:00.000Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 03-03-PLAN.md (rich PlaceRow + use-place-details + UnscheduledAlert + ProgressSteps)
+last_activity_desc: Completed 03-04-PLAN.md (MapView with polylines/markers/InfoWindow + responsive ResultsLayout; 184 tests GREEN)
 progress:
   total_phases: 5
   completed_phases: 2
@@ -33,7 +33,7 @@ Phase: 03 (core-ui) — NEXT
 Status: Executing Phase 03
 Last activity: 2026-06-26 — Phase 03 execution started
 
-Progress: [█████████░] 91% (11/12 plans complete, 2/5 phases complete)
+Progress: [██████████] 100% (12/12 plans complete, 3/5 phases complete)
 
 ## Verification Status
 
@@ -122,6 +122,10 @@ Recent decisions affecting current work:
 - [03-03]: hoursUnknown amber badge exact copy '營業時間未知，建議出發前確認' — SC4 requires identical copy in both itinerary row and map InfoWindow (03-04)
 - [03-03]: usePlaceDetails dedup via Set-based useRef + placeIds.join(',') dependency string
 - [03-03]: Global hoursUnknown alert uses optimizer flag (not details), works before details are fetched
+- [03-04]: useCallback on ALL AdvancedMarker click handlers — mandatory for #404 infinite re-render prevention
+- [03-04]: hoursUnknown in InfoWindow sourced from visit directly (not detailsById) — warning appears immediately before usePlaceDetails resolves
+- [03-04]: map-view-wrapper.tsx is the only import path for MapView — ssr:false gate prevents window-not-defined SSR crash
+- [03-04]: Coordinate gap join in ResultsLayout (buildDaysWithCoords) — coordMap from resolvedPlaces keyed by placeId
 
 ### Pending Todos
 
@@ -139,6 +143,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T14:09:00.000Z
-Stopped at: Completed 03-03-PLAN.md (PlaceRow DISP-02 + use-place-details + UnscheduledAlert + ProgressSteps, 2 tasks, 178 tests GREEN)
-Resume file: .planning/phases/03-core-ui/03-04-PLAN.md
+Last session: 2026-06-26T14:20:00.000Z
+Stopped at: Completed 03-04-PLAN.md (MapView DISP-03 + responsive ResultsLayout DISP-04, 2 tasks, 184 tests GREEN)
+Resume file: .planning/phases/04-auth-save/04-01-PLAN.md
