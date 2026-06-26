@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { and, eq } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { itineraries } from "@/lib/db/schema";
 import { loadItineraryContents } from "@/lib/itinerary/serialize";
 import { ResultsLayout } from "@/components/results-layout";
@@ -18,6 +18,7 @@ export default async function SharePage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
+  const db = getDb();
   if (!db) notFound();
 
   const [row] = await db

@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUser } from "@/lib/auth/get-user";
 import { itineraries, itineraryDays, placeVisits } from "@/lib/db/schema";
 import { loadItineraryContents } from "@/lib/itinerary/serialize";
 import { updateItinerarySchema } from "@/lib/validation/itinerary";
 
 type Params = { params: Promise<{ id: string }> };
+type Db = NonNullable<ReturnType<typeof getDb>>;
 
 /** Fetch one itinerary row scoped to the current user, or null. */
-async function getOwnedRow(id: string, userId: string) {
-  const [row] = await db!
+async function getOwnedRow(db: Db, id: string, userId: string) {
+  const [row] = await db
     .select()
     .from(itineraries)
     .where(and(eq(itineraries.id, id), eq(itineraries.user_id, userId)))
@@ -24,12 +25,13 @@ async function getOwnedRow(id: string, userId: string) {
 export async function GET(_request: NextRequest, { params }: Params): Promise<NextResponse> {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const db = getDb();
   if (!db) {
     return NextResponse.json({ error: "database is not configured" }, { status: 500 });
   }
 
   const { id } = await params;
-  const row = await getOwnedRow(id, user.id);
+  const row = await getOwnedRow(db, id, user.id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const loaded = await loadItineraryContents(row);
@@ -43,6 +45,7 @@ export async function GET(_request: NextRequest, { params }: Params): Promise<Ne
 export async function PATCH(request: NextRequest, { params }: Params): Promise<NextResponse> {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const db = getDb();
   if (!db) {
     return NextResponse.json({ error: "database is not configured" }, { status: 500 });
   }
@@ -83,12 +86,13 @@ export async function PATCH(request: NextRequest, { params }: Params): Promise<N
 export async function DELETE(_request: NextRequest, { params }: Params): Promise<NextResponse> {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const db = getDb();
   if (!db) {
     return NextResponse.json({ error: "database is not configured" }, { status: 500 });
   }
 
   const { id } = await params;
-  const row = await getOwnedRow(id, user.id);
+  const row = await getOwnedRow(db, id, user.id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await db.transaction(async (tx) => {

@@ -25,12 +25,11 @@ import { NextRequest } from "next/server";
 // Module mocks — declared before import (vi.mock is hoisted)
 // ---------------------------------------------------------------------------
 
-// Mock the DB to avoid real Postgres connection
-vi.mock("@/lib/db", () => ({
-  db: {
-    select: vi.fn(),
-  },
-}));
+// Mock the DB to avoid real Postgres connection. getDb() returns a stable mock.
+vi.mock("@/lib/db", () => {
+  const dbMock = { select: vi.fn() };
+  return { getDb: () => dbMock };
+});
 
 // Mock computeRouteMatrix to avoid real Routes API calls
 vi.mock("@/lib/google/routes-client", () => ({
@@ -39,8 +38,11 @@ vi.mock("@/lib/google/routes-client", () => ({
 
 // Import after mocks are declared
 import { POST } from "./route";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { computeRouteMatrix } from "@/lib/google/routes-client";
+
+// Stable mocked db handle (getDb() always returns the same object in the mock).
+const db = getDb();
 
 // ---------------------------------------------------------------------------
 // Helpers

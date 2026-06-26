@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { inArray } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { places } from "@/lib/db/schema";
 import { computeRouteMatrix, type RouteMatrixCoord } from "@/lib/google/routes-client";
 import { optimize } from "@/lib/optimizer";
@@ -64,6 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // The optimizer's only source of resolved places is the DB cache — without a
   // configured database there is nothing to optimize.
+  const db = getDb();
   if (!db) {
     const error: OptimizeErrorResponse = {
       error: "Server configuration error: database is not configured",

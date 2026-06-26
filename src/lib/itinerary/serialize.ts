@@ -1,5 +1,5 @@
 import { asc, eq } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { itineraryDays, placeVisits, places } from "@/lib/db/schema";
 import type { Itinerary } from "@/lib/db/schema";
 import type { OptimizeResult } from "@/lib/optimizer/schedule";
@@ -34,6 +34,7 @@ function toHHMM(t: string | null): string {
  * `row` must already be authorized by the caller (owner-scoped or public+shared).
  */
 export async function loadItineraryContents(row: Itinerary): Promise<LoadedItinerary> {
+  const db = getDb();
   if (!db) throw new Error("database is not configured");
 
   const days = await db

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { and, eq } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUser } from "@/lib/auth/get-user";
 import { itineraries } from "@/lib/db/schema";
 import { loadItineraryContents } from "@/lib/itinerary/serialize";
@@ -19,6 +19,7 @@ export default async function SavedItineraryPage({
 }) {
   const user = await getUser();
   if (!user) redirect("/login");
+  const db = getDb();
   if (!db) notFound();
 
   const { id } = await params;

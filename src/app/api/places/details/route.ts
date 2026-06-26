@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { places } from "@/lib/db/schema";
 import { placeDetails } from "@/lib/google/places-client";
 import { durationForTypes } from "@/lib/places/duration-table";
@@ -44,6 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // Cache-first: check for a fresh row (updated_at within the last 30 days)
+  const db = getDb();
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
   const cached = db

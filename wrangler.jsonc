@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gsd-trip-map",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Hyperdrive: pooled IPv4 access to the Supabase Postgres pooler.
+  // Create the resource (see runbook), then paste its id below:
+  //   wrangler hyperdrive create gsd-trip-map-db \
+  //     --connection-string="postgresql://postgres.<ref>:<pwd>@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres"
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "REPLACE_WITH_HYPERDRIVE_ID",
+      "localConnectionString": "postgresql://localhost:5432/postgres"
+    }
+  ],
+  // Public (build-time-inlined) vars also need to exist at build; secrets are set
+  // via `wrangler secret put` (see runbook), NOT committed here.
+  "vars": {}
+}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveRequestSchema, type ResolvedPlace, type ErrorResponse } from "@/lib/validation/resolve";
 import { textSearch, type LocationBias } from "@/lib/google/places-client";
 import { resolveMapsUrl } from "@/lib/google/url-resolver";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { places } from "@/lib/db/schema";
 import { getUser } from "@/lib/auth/get-user";
 import { checkAndCount, subjectFor } from "@/lib/ratelimit/check";
@@ -79,6 +79,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 500 }
     );
   }
+
+  // DB handle for the shared places cache (null when DB unconfigured).
+  const db = getDb();
 
   // Build locationBias for textSearch (text path only)
   const bias: LocationBias | undefined = locationBias

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUser } from "@/lib/auth/get-user";
 import { itineraries } from "@/lib/db/schema";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 export default async function ItinerariesPage() {
   const user = await getUser();
   if (!user) redirect("/login?next=/itineraries");
+  const db = getDb();
   if (!db) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">

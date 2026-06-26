@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { inArray, eq, desc } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { getUser } from "@/lib/auth/get-user";
 import { itineraries, itineraryDays, placeVisits, places } from "@/lib/db/schema";
 import { saveItinerarySchema } from "@/lib/validation/itinerary";
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const db = getDb();
   if (!db) {
     return NextResponse.json(
       { error: "Server configuration error: database is not configured" },
@@ -106,6 +107,7 @@ export async function GET(): Promise<NextResponse> {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const db = getDb();
   if (!db) {
     return NextResponse.json(
       { error: "Server configuration error: database is not configured" },

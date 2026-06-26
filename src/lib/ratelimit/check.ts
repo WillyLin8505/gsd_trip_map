@@ -1,5 +1,5 @@
 import { and, eq, sql } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { apiUsage } from "@/lib/db/schema";
 
 /** Daily cap on place lookups per subject (SC2). */
@@ -46,6 +46,7 @@ function today(): string {
  * for a cost-control limiter (the goal is bounding abuse, not exact accounting).
  */
 export async function checkAndCount(subject: string, amount = 1): Promise<RateLimitResult> {
+  const db = getDb();
   if (!db) return { allowed: true, count: 0, limit: DAILY_LOOKUP_LIMIT };
 
   // Fail OPEN: a limiter is a guardrail, not a hard dependency. If its store is
