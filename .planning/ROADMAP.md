@@ -81,7 +81,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
   4. Places with unknown opening hours display a visible warning in both the itinerary table and map tooltip.
   5. The full flow (input → resolve → optimize → view) is usable on a mobile browser at 375px viewport width without horizontal scrolling or overlapping elements.
 
-**Plans**: 2/4 plans executed
+**Plans**: 3/4 plans executed
 **UI hint**: yes
 
 **Wave 0** *(scaffolding — blocks all component work)*
@@ -94,7 +94,7 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 03-03-PLAN.md — Rich PlaceRow with opening hours/price via details fetch + hoursUnknown badge + UnscheduledAlert + ProgressSteps (DISP-02)
+- [x] 03-03-PLAN.md — Rich PlaceRow with opening hours/price via details fetch + hoursUnknown badge + UnscheduledAlert + ProgressSteps (DISP-02)
 
 **Wave 3** *(blocked on Wave 2 — 03-04 depends on 03-03's place-input-panel.tsx edits)*
 
@@ -139,6 +139,6 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 |-------|----------------|--------|-----------|
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
 | 2. Optimization Engine | 3/3 | Complete   | 2026-06-25 |
-| 3. Core UI | 2/4 | In Progress|  |
+| 3. Core UI | 3/4 | In Progress|  |
 | 4. Auth + Persistence + Sharing | 0/? | Not started | - |
 | 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |

@@ -8,13 +8,13 @@ status: executing
 stopped_at: Phase 3 plans verified — ready for execution
 last_updated: "2026-06-26T14:02:00.000Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 03-02-PLAN.md (PlaceInputPanel + ItineraryView flow)
+last_activity_desc: Completed 03-03-PLAN.md (rich PlaceRow + use-place-details + UnscheduledAlert + ProgressSteps)
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 11
-  completed_plans: 10
-  percent: 82
+  completed_plans: 11
+  percent: 91
 ---
 
 # Project State
@@ -33,7 +33,7 @@ Phase: 03 (core-ui) — NEXT
 Status: Executing Phase 03
 Last activity: 2026-06-26 — Phase 03 execution started
 
-Progress: [████████░░] 82% (10/11 plans complete, 2/5 phases complete)
+Progress: [█████████░] 91% (11/12 plans complete, 2/5 phases complete)
 
 ## Verification Status
 
@@ -119,6 +119,9 @@ Recent decisions affecting current work:
 - [03-02]: Node vitest env: pure data assertions in component tests (no DOM/jsdom) — compatible with existing test infrastructure
 - [03-02]: resolvedPlaces: ResolvedPlace[] retains lat/lng through all state transitions for 03-04 coordinate join
 - [03-02]: ResultsLayout accepts resolvedPlaces prop now (forwarded unused) to lock interface for 03-04 without signature change
+- [03-03]: hoursUnknown amber badge exact copy '營業時間未知，建議出發前確認' — SC4 requires identical copy in both itinerary row and map InfoWindow (03-04)
+- [03-03]: usePlaceDetails dedup via Set-based useRef + placeIds.join(',') dependency string
+- [03-03]: Global hoursUnknown alert uses optimizer flag (not details), works before details are fetched
 
 ### Pending Todos
 
@@ -136,6 +139,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T14:02:00.000Z
-Stopped at: Completed 03-02-PLAN.md (PlaceInputPanel + ItineraryView flow, 3 tasks, 11 tests GREEN)
-Resume file: .planning/phases/03-core-ui/03-03-PLAN.md
+Last session: 2026-06-26T14:09:00.000Z
+Stopped at: Completed 03-03-PLAN.md (PlaceRow DISP-02 + use-place-details + UnscheduledAlert + ProgressSteps, 2 tasks, 178 tests GREEN)
+Resume file: .planning/phases/03-core-ui/03-04-PLAN.md
