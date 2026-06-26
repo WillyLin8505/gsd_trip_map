@@ -22,10 +22,17 @@ import { createClient } from "@/lib/supabase/server";
  *   can safely check `if (!user) return 401`.
  */
 export async function getUser() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      return null;
+    }
+    return data.user ?? null;
+  } catch {
+    // createClient() throws when Supabase env is missing/misconfigured
+    // (e.g. an invalid URL). Treat as anonymous so the public planner (AUTH-01)
+    // keeps working instead of 500-ing every page that reads auth state.
     return null;
   }
-  return data.user ?? null;
 }
