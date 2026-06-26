@@ -34,8 +34,11 @@ F1 and F2 are independent (adding does NOT auto-arrange).
 ## Global constants
 
 - **Lunch window:** 11:30–13:30 (start must fall in window). **Dinner window:** 17:30–19:30.
-- **Restaurant detection:** `place_types` intersects
-  `{restaurant, cafe, food, meal_takeaway, meal_delivery, bakery, bar}`.
+- **Place categories (auto from Google `place_types`), 3 types:**
+  - **餐廳 (restaurant):** types intersect `{restaurant, food, meal_takeaway, meal_delivery}` → eligible for lunch/dinner slots.
+  - **點心 (snack):** types intersect `{cafe, bakery, dessert, ice_cream_shop, bar}` → treated as a normal **short route stop** (NO meal slot).
+  - **行程 (attraction):** everything else → normal route stop.
+  - Only **餐廳** drives meal slotting; **點心 + 行程** are both ordinary shortest-path stops. A place matching both restaurant and snack types resolves to 餐廳 (restaurant wins).
 - **Closest-day metric:** for a new place `p`, day distance = min over the day's
   places of haversine(p, place); chosen day = smallest such distance.
 
@@ -47,7 +50,8 @@ F1 and F2 are independent (adding does NOT auto-arrange).
 - `reorder=false` (F1): keep the given order; assign times (reuse the time-walk
   from `scheduleTimes` for a single day).
 - `reorder=true` (F2):
-  1. Partition into restaurants `R` and attractions `A` (by `place_types`).
+  1. Classify each place (`classifyPlace(placeTypes) → "restaurant" | "snack" | "attraction"`).
+     `R` = 餐廳 (restaurant) only. `A` = 點心 (snack) + 行程 (attraction) = all route stops.
   2. Order `A` with `nearestNeighbor` + `twoOptImprove` over the A-submatrix.
   3. Walk the clock from `dailyStartMinutes`; when it enters the lunch window and
      no lunch placed and `R` non-empty, insert the `R` member nearest the current
@@ -56,7 +60,7 @@ F1 and F2 are independent (adding does NOT auto-arrange).
   4. If `R` is empty, it's plain shortest-path.
   5. Assign times (opening-hours respected; `hoursUnknown` kept with warning, as
      in `scheduleTimes`).
-- Pure, no I/O. `isRestaurant(placeTypes: string[] | null): boolean` helper.
+- Pure, no I/O. `classifyPlace(placeTypes: string[] | null): "restaurant" | "snack" | "attraction"` helper (only `"restaurant"` gets meal slots).
 
 ### 2. Single-day API — `POST /api/optimize/day`
 - Body: `{ placeIds: string[] (1–25), reorder: boolean, dayNumber?: number (default 1), travelDate?: string }`.
@@ -99,7 +103,8 @@ F2: 自動安排 → /api/optimize/day {reorder:true} → replaceDay
 - No DB / no API key → same guards as existing routes (500 with clear error).
 
 ## Testing
-- `day.test.ts`: `isRestaurant`; `scheduleSingleDay` reorder=false (order kept,
+- `day.test.ts`: `classifyPlace` (restaurant/snack/attraction; restaurant-wins tie);
+  `scheduleSingleDay` reorder=false (order kept,
   times assigned); reorder=true (attractions shortest-path; one restaurant → lunch
   slot; two → lunch+dinner; none → plain).
 - `closest-day.test.ts`: `pickClosestDay` picks the nearest day; single-day and
