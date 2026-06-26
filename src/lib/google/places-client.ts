@@ -74,16 +74,21 @@ export async function textSearch(
 ): Promise<PlaceResult | null> {
   const { city, apiKey, locationBias } = options;
 
-  // Build locationBias: use the explicit bias if provided, otherwise use a
-  // city-centered circle (using a representative center for the search).
-  // The city name is also incorporated into the textQuery for fallback disambiguation.
-  const bias: LocationBias = locationBias ?? buildCityBias(city);
+  // Use the explicit bias if provided, else a city-centered circle (Taiwan cities).
+  // For cities with no known circle (non-Taiwan), send no locationBias and fold the
+  // city name into the textQuery so Google can still disambiguate by text.
+  const bias: LocationBias | null = locationBias ?? buildCityBias(city);
+  const query = bias ? textQuery : `${textQuery} ${city}`.trim();
 
-  const requestBody = {
-    textQuery,
+  const requestBody: {
+    textQuery: string;
+    languageCode: string;
+    locationBias?: LocationBias;
+  } = {
+    textQuery: query,
     languageCode: "zh-TW",
-    locationBias: bias,
   };
+  if (bias) requestBody.locationBias = bias;
 
   const response = await fetch(PLACES_API_BASE, {
     method: "POST",
@@ -186,7 +191,7 @@ const TAIWAN_CITY_COORDS: Record<string, { lat: number; lng: number; radius: num
  * Security: lookup is a fixed Record keyed by normalized string.
  * No dynamic property execution, no prototype pollution (T-03-02).
  */
-export function buildCityBias(city: string): LocationBias {
+export function buildCityBias(city: string): LocationBias | null {
   const normalized = city.trim();
 
   const lookup =
@@ -204,15 +209,11 @@ export function buildCityBias(city: string): LocationBias {
     };
   }
 
-  // Fallback for unrecognized cities (non-Taiwan destinations).
-  // A wider 100km radius ensures the textQuery city name can still
-  // guide Place resolution even when we have no coordinates.
-  return {
-    circle: {
-      center: { latitude: 23.6978, longitude: 120.9605 }, // Taiwan geographic center
-      radius: 100000, // wider fallback — textQuery still disambiguates
-    },
-  };
+  // Unrecognized city (non-Taiwan destination like 京都市 / Tokyo): return no
+  // geographic bias. A Taiwan-centered circle would bias AWAY from the real city,
+  // and Google caps circle.radius at 50km so a "wide" Taiwan circle is invalid.
+  // textSearch folds the city name into the query instead for disambiguation.
+  return null;
 }
 
 // ---------------------------------------------------------------------------
