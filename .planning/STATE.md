@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 04
-current_phase_name: auth-save
-status: implemented
-stopped_at: context exhaustion at 78% (2026-06-26)
-last_updated: "2026-06-26T15:32:03.809Z"
-last_activity: 2026-06-26
-last_activity_desc: Phase 05 implemented (duration override, rate limit, debounce)
+current_phase: 06
+current_phase_name: interactive-day-editing
+status: roadmapped
+stopped_at: Phase 6 added to ROADMAP; ready to plan
+last_updated: "2026-06-27"
+last_activity: 2026-06-27
+last_activity_desc: Phase 06 (interactive single-day editing) added to ROADMAP from sub-project C spec
 progress:
-  total_phases: 5
-  completed_phases: 3
+  total_phases: 6
+  completed_phases: 5
   total_plans: 13
   completed_plans: 11
-  percent: 60
+  percent: 83
 ---
 
 # Project State
@@ -85,6 +85,10 @@ Progress: [█████████▉] ~98% (5/5 phases code-complete; CI ve
 
 ## Accumulated Context
 
+### Roadmap Evolution
+
+- Phase 6 added (2026-06-27): Interactive Single-Day Editing — F1 paste→add to closest day; F2 per-day 自動安排 (3-category 餐廳/點心/行程; only 餐廳 gets meal slots). Source spec: docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md. Dir: .planning/phases/06-interactive-day-editing/
+
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
@@ -143,10 +147,12 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T15:32:03.784Z
-Stopped at: context exhaustion at 78% (2026-06-26)
-Resume action: Plan Phase 04 (auth-save) — create .planning/phases/04-auth-save/ + plans
-Resume file: .planning/phases/04-auth-save/04-01-PLAN.md (to be created)
+Last session: 2026-06-27 (resumed)
+Stopped at: Session resumed; v1 live, sub-project C spec'd (3-category, commit cc6d8d8). Proceeding to add sub-project C to ROADMAP (gsd-phase) then plan it.
+Resume action: gsd-phase to add sub-project C (interactive single-day editing) as a new phase → gsd-plan-phase
+Resume file: docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md (source spec for the new phase)
+
+Note: HANDOFF.json + .continue-here.md consumed and removed on 2026-06-27 resume. subC-3cat task (spec → 3-category) is DONE per commit cc6d8d8 (handoff was stale on it).
 
 ### Carried non-blocking concerns (from Phase 03 UAT)
 

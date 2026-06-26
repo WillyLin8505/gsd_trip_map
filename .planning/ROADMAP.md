@@ -133,6 +133,25 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 6: Interactive Single-Day Editing
+
+**Goal**: After an itinerary is generated, the user can refine it one day at a time — paste a new place to add it to the geographically closest day, and press a per-day button to auto-arrange that day by shortest path while slotting restaurants into lunch/dinner windows. Editing one day never disturbs the others or wipes the itinerary.
+**Mode:** mvp
+**Depends on**: Phase 5
+**Requirements**: EDIT-01, EDIT-02
+**Source spec**: `docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md`
+**Success Criteria** (what must be TRUE):
+
+  1. On the results page, the user can paste/enter a new place; the system resolves it and appends it to the geographically closest existing day (that day is re-timed, the existing order preserved), without re-running the whole itinerary.
+  2. Each day has an 「自動安排」 button that re-orders only that day by shortest path and re-times it; other days are untouched.
+  3. Auto-arrange classifies each place from Google `place_types` into 餐廳 / 點心 / 行程; only 餐廳 are slotted into the lunch (11:30–13:30) or dinner (17:30–19:30) windows — 點心 and 行程 are ordinary shortest-path route stops. A place matching both restaurant and snack types resolves to 餐廳.
+  4. A pure `scheduleSingleDay` primitive and a `pickClosestDay` helper exist with unit tests; a `POST /api/optimize/day` endpoint validates input (1–25 placeIds), returns 422 for unresolved placeIds, and returns `{ day, unscheduled }`.
+  5. A failed day operation (API/resolve error, place NOT_FOUND, missing place_types) shows an inline message and keeps the existing itinerary intact — it is never wiped.
+
+**Out of scope**: AI-recommended places (Part B); persisting edits separately from the existing save flow; cross-day moves / drag-and-drop (v2).
+**Plans**: TBD
+**UI hint**: yes
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -142,3 +161,4 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | 3. Core UI | 4/4 | Complete   | 2026-06-26 |
 | 4. Auth + Persistence + Sharing | 4/4 | Code-complete (CI verify pending) | 2026-06-26 |
 | 5. Polish + Edit + Cost Hardening | 3/4 | Code-complete (375px walkthrough pending) | 2026-06-26 |
+| 6. Interactive Single-Day Editing | 0/? | Not planned | — |
