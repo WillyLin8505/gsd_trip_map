@@ -144,6 +144,14 @@ export function DayPlaceAdder({
       // Step 4: Get the target day's existing placeIds + append new one
       const targetDay = optimizeResult.days.find((d) => d.dayNumber === dayNumber);
       const existingPlaceIds = targetDay?.visits.map((v) => v.placeId) ?? [];
+
+      // WR-04: Reject duplicate before sending to API — same place would be
+      // scheduled twice and return an invalid matrix.
+      if (existingPlaceIds.includes(newPlace.placeId)) {
+        setError("這個地點已在當天行程中");
+        return;
+      }
+
       const placeIds = [...existingPlaceIds, newPlace.placeId];
 
       // Step 5: POST /api/optimize/day (reorder=false — keep existing order, just re-time)
@@ -191,7 +199,12 @@ export function DayPlaceAdder({
 
       // Step 6: Update state — swap day + merge new place coords
       replaceDay(dayNumber, day);
-      setResolvedPlaces((prev) => [...prev, newPlace]);
+      // WR-04: guard against duplicates in the coord-map (defensive; the check
+      // above ensures we don't reach here with an already-present placeId, but
+      // keep the guard for correctness in case of concurrent state updates).
+      setResolvedPlaces((prev) =>
+        prev.some((p) => p.placeId === newPlace.placeId) ? prev : [...prev, newPlace]
+      );
       setInputValue(""); // clear on success
     } finally {
       setLoading(false);
