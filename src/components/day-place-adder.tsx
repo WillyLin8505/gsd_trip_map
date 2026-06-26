@@ -174,10 +174,20 @@ export function DayPlaceAdder({
         return;
       }
 
-      const { day } = (await dayRes.json()) as {
+      const { day, unscheduled } = (await dayRes.json()) as {
         day: { dayNumber: number; visits: ScheduledVisit[] };
         unscheduled: Array<{ placeId: string; reason: string }>;
       };
+
+      // CR-01: If the newly-added place was rejected (e.g. closed on this day),
+      // inform the user and do NOT update the itinerary or clear the input.
+      // The user must never lose a place silently.
+      if (unscheduled.some((u) => u.placeId === newPlace.placeId)) {
+        const reason =
+          unscheduled.find((u) => u.placeId === newPlace.placeId)?.reason ?? "";
+        setError(`「${newPlace.displayName}」在該天無法安排（${reason}）`);
+        return; // keep input value; itinerary unchanged
+      }
 
       // Step 6: Update state — swap day + merge new place coords
       replaceDay(dayNumber, day);
