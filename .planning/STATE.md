@@ -4,11 +4,11 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 06
 current_phase_name: interactive-day-editing
-status: planning
-stopped_at: Phase 6 planning paused at UI-SPEC gate — run /gsd-ui-phase 6 then /gsd-plan-phase 6
+status: planned
+stopped_at: Phase 6 planned (2 plans, plan-checker PASS); ready to execute
 last_updated: "2026-06-27"
 last_activity: 2026-06-27
-last_activity_desc: Phase 06 CONTEXT + RESEARCH + VALIDATION written; blocked on UI-SPEC gate (frontend phase)
+last_activity_desc: Phase 06 planned — F1 (06-01) + F2 (06-02) vertical slices; UI-SPEC authored; plan-checker PASS
 progress:
   total_phases: 6
   completed_phases: 5
@@ -147,12 +147,14 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-27 (resumed)
-Stopped at: Session resumed; v1 live, sub-project C spec'd (3-category, commit cc6d8d8). Proceeding to add sub-project C to ROADMAP (gsd-phase) then plan it.
-Resume action: gsd-phase to add sub-project C (interactive single-day editing) as a new phase → gsd-plan-phase
-Resume file: docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md (source spec for the new phase)
+Last session: 2026-06-27
+Stopped at: Phase 6 (interactive-day-editing) fully planned and verified (plan-checker PASS). Ready to execute.
+Resume action: /gsd-execute-phase 6 — Wave 1 (06-01 F1 add-place) then Wave 2 (06-02 F2 auto-arrange)
+Resume file: .planning/phases/06-interactive-day-editing/06-01-PLAN.md
 
-Note: HANDOFF.json + .continue-here.md consumed and removed on 2026-06-27 resume. subC-3cat task (spec → 3-category) is DONE per commit cc6d8d8 (handoff was stale on it).
+### Phase 6 planning artifacts (all committed)
+- 06-CONTEXT.md (from approved spec), 06-RESEARCH.md (HIGH confidence, verified signatures + 9 landmines), 06-VALIDATION.md (Nyquist), 06-UI-SPEC.md (F1/F2 contract), 06-PATTERNS.md, 06-01-PLAN.md (EDIT-01), 06-02-PLAN.md (EDIT-02).
+- Key landmines for execution: matrix index alignment (A-submatrix map-back nnResult.map(i=>A[i])); getOpenWindow is private (reuse via scheduleTimes); travelDate default nextMonday(); place_types null→attraction; day.ts purity; never wipe itinerary on failure.
 
 ### Carried non-blocking concerns (from Phase 03 UAT)
 
