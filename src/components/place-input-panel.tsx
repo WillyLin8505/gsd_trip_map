@@ -9,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ResolvedPlaceList } from "@/components/resolved-place-list";
 import { ResultsLayout } from "@/components/results-layout";
 import { ProgressSteps } from "@/components/progress-steps";
+import { SaveItineraryButton } from "@/components/save-itinerary-button";
 import { usePlaceDetails } from "@/lib/places/use-place-details";
 import type { ResolvedPlace } from "@/lib/validation/resolve";
 import type { OptimizeResult } from "@/types/itinerary";
@@ -167,7 +168,12 @@ export function PlaceInputPanel() {
     return (
       <div className="space-y-4">
         <ProgressSteps current={progressStep} />
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <SaveItineraryButton
+            itinerary={optimizeResult}
+            resolvedPlaces={resolvedPlaces}
+            city={city}
+          />
           <Button variant="outline" onClick={handleReset}>
             重新輸入
           </Button>

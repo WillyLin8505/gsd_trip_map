@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 03
-current_phase_name: core-ui
-status: complete
-stopped_at: Completed 03-04-PLAN.md (MapView + responsive ResultsLayout — DISP-03 + DISP-04)
-last_updated: "2026-06-26T14:20:00.000Z"
+current_phase: 04
+current_phase_name: auth-save
+status: implemented
+stopped_at: Phase 04 implemented (auth UI+OAuth, save/list, sharing); tsc clean; CI tests + operator OAuth config pending
+last_updated: "2026-06-26T17:10:00.000Z"
 last_activity: 2026-06-26
-last_activity_desc: Completed 03-04-PLAN.md (MapView with polylines/markers/InfoWindow + responsive ResultsLayout; 184 tests GREEN)
+last_activity_desc: Implemented Phase 04 Waves 2–4 (auth foundation pre-existed); 5 API routes, 6 pages/components, 3 test files; tsc clean
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
-  percent: 91
+  completed_phases: 3
+  total_plans: 12
+  completed_plans: 12
+  percent: 95
 ---
 
 # Project State
@@ -28,12 +28,13 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 03 (core-ui) — EXECUTING
-Phase: 03 (core-ui) — NEXT
-Status: Executing Phase 03
-Last activity: 2026-06-26 — Phase 03 execution started
+Phase: 03 (core-ui) — COMPLETE (UAT 2/2 pass)
+Phase: 04 (auth-save) — IMPLEMENTED (Waves 1–4); pending CI tests + operator OAuth config
+Phase: 05 (polish-edit-cost) — NEXT
+Status: Phase 04 code complete & typechecked; verification deferred to Linux/CI; needs review/commit
+Last activity: 2026-06-26 — Phase 04 implemented (auth UI, persistence, sharing)
 
-Progress: [██████████] 100% (12/12 plans complete, 3/5 phases complete)
+Progress: [█████████▒] ~95% (4/5 phases code-complete, Phase 04 pending CI verify)
 
 ## Verification Status
 
@@ -143,6 +144,11 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T14:20:00.000Z
-Stopped at: Completed 03-04-PLAN.md (MapView DISP-03 + responsive ResultsLayout DISP-04, 2 tasks, 184 tests GREEN)
-Resume file: .planning/phases/04-auth-save/04-01-PLAN.md
+Last session: 2026-06-26T16:30:00.000Z
+Stopped at: Phase 03 closed — UAT 2/2 pass (browser-verified). 2 non-blocking gaps carried (see 03-UAT.md Gaps).
+Resume action: Plan Phase 04 (auth-save) — create .planning/phases/04-auth-save/ + plans
+Resume file: .planning/phases/04-auth-save/04-01-PLAN.md (to be created)
+
+### Carried non-blocking concerns (from Phase 03 UAT)
+- Time-slot values reported possibly "off by hours" in browser; no TZ conversion found in code; could not reproduce server-side. Treat feature as working pending explicit report.
+- place-row.tsx summarizeHours() shows openingHours[0] (Sunday) regardless of travel day — candidate fix in Phase 5.
