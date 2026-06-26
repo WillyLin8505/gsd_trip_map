@@ -8,6 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ResolvedPlaceList } from "@/components/resolved-place-list";
 import { ResultsLayout } from "@/components/results-layout";
+import { ProgressSteps } from "@/components/progress-steps";
+import { usePlaceDetails } from "@/lib/places/use-place-details";
 import type { ResolvedPlace } from "@/lib/validation/resolve";
 import type { OptimizeResult } from "@/types/itinerary";
 
@@ -16,11 +18,15 @@ import type { OptimizeResult } from "@/types/itinerary";
  *
  * Step 1 (Input): City + place names textarea → 查詢地點
  * Step 2 (Confirm): ResolvedPlaceList with remove buttons → 最佳化行程
- * Step 3 (Results): ResultsLayout → ItineraryView + MapView placeholder
+ * Step 3 (Results): ResultsLayout → ItineraryView + UnscheduledAlert + MapView placeholder
  *
  * AUTH-01: No auth/session imports. All API calls are anonymous.
  * T-03-03: Textarea split by newline + trim + filter (never JSON.parse user input).
  * T-03-04: React JSX auto-escapes displayName (no dangerouslySetInnerHTML).
+ *
+ * ProgressSteps: driven from flow state (1=input/resolving, 2=confirm, 3=results).
+ * usePlaceDetails: called after optimize to fetch opening hours + price level.
+ *   detailsById is passed into ResultsLayout → ItineraryView → DayCard → PlaceRow.
  */
 export function PlaceInputPanel() {
   const [rawInputs, setRawInputs] = useState<string>("");
@@ -29,6 +35,24 @@ export function PlaceInputPanel() {
   const [optimizeResult, setOptimizeResult] = useState<OptimizeResult | null>(null);
   const [loading, setLoading] = useState<"idle" | "resolving" | "optimizing">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  // Collect all scheduled placeIds after optimization so we can fetch their details
+  const scheduledPlaceIds = optimizeResult
+    ? optimizeResult.days.flatMap((d) => d.visits.map((v) => v.placeId))
+    : [];
+
+  // usePlaceDetails: dedupes requests, tolerates per-id failures
+  const { details: detailsById } = usePlaceDetails(scheduledPlaceIds);
+
+  // Derive ProgressSteps current step from flow state
+  // idle + no resolvedPlaces = step 1
+  // resolvedPlaces present + no result = step 2
+  // optimizeResult present = step 3
+  const progressStep: 1 | 2 | 3 = optimizeResult
+    ? 3
+    : resolvedPlaces.length > 0
+    ? 2
+    : 1;
 
   // ---------------------------------------------------------------------------
   // Flow A: Resolve places
@@ -142,12 +166,17 @@ export function PlaceInputPanel() {
   if (optimizeResult) {
     return (
       <div className="space-y-4">
+        <ProgressSteps current={progressStep} />
         <div className="flex justify-end">
           <Button variant="outline" onClick={handleReset}>
             重新輸入
           </Button>
         </div>
-        <ResultsLayout itinerary={optimizeResult} resolvedPlaces={resolvedPlaces} />
+        <ResultsLayout
+          itinerary={optimizeResult}
+          resolvedPlaces={resolvedPlaces}
+          detailsById={detailsById}
+        />
       </div>
     );
   }
@@ -158,6 +187,7 @@ export function PlaceInputPanel() {
   if (resolvedPlaces.length > 0) {
     return (
       <div className="space-y-4">
+        <ProgressSteps current={progressStep} />
         {error && (
           <Alert variant="destructive" role="alert">
             <AlertTitle>最佳化失敗</AlertTitle>
@@ -214,6 +244,7 @@ export function PlaceInputPanel() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ProgressSteps current={progressStep} />
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">旅遊行程規劃器</h1>
