@@ -25,14 +25,14 @@
 
 ### Display（結果顯示）
 
-- [ ] **DISP-01**: 以逐天行程表呈現，清楚顯示每天參觀哪些地點及時間區間
-- [ ] **DISP-02**: 每個地點顯示營業時間、門票資訊（來自 Google Places API）
-- [ ] **DISP-03**: 以互動地圖顯示每天的景點位置和行走路線（不同天用不同顏色）
-- [ ] **DISP-04**: 版面在手機上可正常使用（RWD 響應式設計）
+- [x] **DISP-01**: 以逐天行程表呈現，清楚顯示每天參觀哪些地點及時間區間
+- [x] **DISP-02**: 每個地點顯示營業時間、門票資訊（來自 Google Places API）
+- [x] **DISP-03**: 以互動地圖顯示每天的景點位置和行走路線（不同天用不同顏色）
+- [x] **DISP-04**: 版面在手機上可正常使用（RWD 響應式設計）
 
 ### Account & Sharing（帳號與分享）
 
-- [ ] **AUTH-01**: 未登入使用者可完整使用規劃功能（產生行程）
+- [x] **AUTH-01**: 未登入使用者可完整使用規劃功能（產生行程）
 - [ ] **AUTH-02**: 使用者可用 Email + 密碼註冊帳號
 - [ ] **AUTH-03**: 使用者可用 Google 帳號第三方登入
 - [ ] **AUTH-04**: 登入後可儲存多份行程並隨時查看
@@ -84,11 +84,11 @@
 | SCHED-03 | Phase 2 | Complete |
 | SCHED-04 | Phase 2 | Complete |
 | SCHED-05 | Phase 2 | Complete |
-| DISP-01 | Phase 3 | Pending |
-| DISP-02 | Phase 3 | Pending |
-| DISP-03 | Phase 3 | Pending |
-| DISP-04 | Phase 3 | Pending |
-| AUTH-01 | Phase 3 | Pending |
+| DISP-01 | Phase 3 | Complete |
+| DISP-02 | Phase 3 | Complete |
+| DISP-03 | Phase 3 | Complete |
+| DISP-04 | Phase 3 | Complete |
+| AUTH-01 | Phase 3 | Complete |
 | AUTH-02 | Phase 4 | Pending |
 | AUTH-03 | Phase 4 | Pending |
 | AUTH-04 | Phase 4 | Pending |

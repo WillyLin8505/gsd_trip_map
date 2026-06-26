@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 03
 current_phase_name: core-ui
-status: planned
+status: executing
 stopped_at: Phase 3 plans verified — ready for execution
-last_updated: "2026-06-26T08:00:00.000Z"
+last_updated: "2026-06-26T05:49:21.586Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 03 plans verified (4 plans, 4 waves sequential)
+last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 11
+  completed_plans: 8
   percent: 40
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 02 (optimization-engine) — VERIFIED (passed)
+Phase: 03 (core-ui) — EXECUTING
 Phase: 03 (core-ui) — NEXT
-Status: Phase 02 complete and verified — ready to plan Phase 03
-Last activity: 2026-06-26 — Phase 02 verification passed
+Status: Executing Phase 03
+Last activity: 2026-06-26 — Phase 03 execution started
 
 Progress: [██████████] 40% (2/5 phases complete)
 
@@ -112,6 +112,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 422 Semantically more correct than 400; callers know exactly what to resolve first
 - [Phase ?]: Same GCP server key for both Places and Routes APIs — one env var, same billing account (02-CONTEXT.md)
 - [Phase ?]: Text-resolved places without detail fetch always get a valid duration in OptimizerPlace
+- [Phase ?]: shadcn Nova preset with Tailwind v4: Lucide icons + Geist fonts
+- [Phase ?]: globals.css Geist font tokens restored after shadcn init circular var reference bug
+- [Phase ?]: buildCityBias() fixed: 24-entry Taiwan city lookup + 100km fallback for non-Taiwan cities
+- [Phase ?]: Wave-0 RED scaffold pattern: test files import unimplemented components to document DISP-01/02/03 contracts
 
 ### Pending Todos
 
@@ -129,6 +133,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T00:01:35.156Z
+Last session: 2026-06-26T05:48:53.691Z
 Stopped at: Phase 3 UI-SPEC approved
 Resume file: .planning/phases/03-core-ui/03-UI-SPEC.md
