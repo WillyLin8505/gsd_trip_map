@@ -1,10 +1,11 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
+// db is null when DATABASE_URL is not configured (dev/test without Supabase).
+// Route handlers that write to the cache must check `db` before using it.
+function createDb() {
+  if (!process.env.DATABASE_URL) return null;
+  return drizzle(postgres(process.env.DATABASE_URL));
 }
 
-const client = postgres(process.env.DATABASE_URL);
-
-export const db = drizzle(client);
+export const db = createDb();

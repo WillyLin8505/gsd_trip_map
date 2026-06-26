@@ -93,7 +93,7 @@ function makePlaceRow(overrides: Partial<{
 function mockDbReturn(rows: ReturnType<typeof makePlaceRow>[]) {
   const whereMock = vi.fn().mockResolvedValue(rows);
   const fromMock = vi.fn().mockReturnValue({ where: whereMock });
-  vi.mocked(db.select).mockReturnValue({ from: fromMock } as unknown as ReturnType<typeof db.select>);
+  vi.mocked(db!.select).mockReturnValue({ from: fromMock } as unknown as ReturnType<NonNullable<typeof db>["select"]>);
   return { whereMock, fromMock };
 }
 
@@ -133,7 +133,7 @@ describe("POST /api/optimize — input validation", () => {
     const body = await res.json() as { error: string };
     expect(body).toHaveProperty("error");
     // db and computeRouteMatrix must NOT be called before validation fails
-    expect(db.select).not.toHaveBeenCalled();
+    expect(db!.select).not.toHaveBeenCalled();
     expect(computeRouteMatrix).not.toHaveBeenCalled();
   });
 
@@ -141,7 +141,7 @@ describe("POST /api/optimize — input validation", () => {
     mockDbReturn([]);
     const res = await POST(makeRequest({ placeIds: [] }));
     expect(res.status).toBe(400);
-    expect(db.select).not.toHaveBeenCalled();
+    expect(db!.select).not.toHaveBeenCalled();
     expect(computeRouteMatrix).not.toHaveBeenCalled();
   });
 

@@ -1,5 +1,5 @@
 ---
-status: testing
+status: complete
 phase: 03-core-ui
 source: [03-VERIFICATION.md]
 started: 2026-06-26
@@ -8,13 +8,7 @@ updated: 2026-06-26
 
 ## Current Test
 
-number: 1
-name: Mobile responsive layout at 375px — no horizontal scroll, Tabs for map/itinerary
-expected: |
-  At 375px viewport width, the full input→resolve→optimize→results flow has no horizontal scroll.
-  Mobile: shadcn Tabs show "行程表" and "地圖" panels that toggle correctly. Tab height is 44px (h-11).
-  Desktop (>768px): ItineraryView on left (420px scroll area) and MapView on right (flex-1 sticky) render side by side.
-awaiting: user response
+none — all tests resolved
 
 ## Tests
 
@@ -26,7 +20,7 @@ expected: |
   - No horizontal scroll bar appears
   - "行程表" and "地圖" tabs are visible and toggle the two panels
   - All buttons/tabs are at least 44px tall (touch targets)
-result: [pending]
+result: pass
 
 ### 2. Google Maps InfoWindow runtime click (SC4 + DISP-03)
 
@@ -36,15 +30,32 @@ expected: |
   - InfoWindow opens showing: place name, time slot (e.g. 09:00–11:00)
   - If the place has hoursUnknown=true: amber warning "營業時間未知，建議出發前確認" appears
   - No CPU runaway / infinite loop (useCallback guard working)
-result: [pending]
+result: pass
+notes: |
+  User confirmed: InfoWindow opens with place name + time slot, markers clickable,
+  no CPU runaway. Marker/InfoWindow behavior (DISP-03 + SC4) verified in browser.
+  Open concern noted in Gaps below re: time-slot values — user instructed to
+  treat the feature as working and proceed; concern carried forward, not blocking.
 
 ## Summary
 
 total: 2
-passed: 0
+passed: 2
 issues: 0
-pending: 2
+pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
+
+- [CARRIED — non-blocking] Time-slot values were reported as possibly "off by hours"
+  during browser UAT. Static trace found NO timezone conversion in the optimizer,
+  routes-client (seconds→minutes correct), opening-hours storage (verbatim local),
+  or display layer — displayed slot == optimizer output (day-1 first stop pinned to
+  09:00 local). Could not reproduce server-side (tool sandbox cannot resolve the
+  direct-connection DB host). User directed to assume the feature works pending an
+  explicit report. Revisit if confirmed.
+- [SUSPECT — non-blocking] `place-row.tsx summarizeHours()` always renders
+  `openingHours[0]` (the first period, typically Sunday) regardless of the actual
+  travel day-of-week. This can show the wrong day's hours in the 行程表 one-liner.
+  Candidate fix for Phase 5 (opening-hours per-day breakdown is already deferred there).

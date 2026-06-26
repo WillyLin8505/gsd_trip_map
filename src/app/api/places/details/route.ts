@@ -46,16 +46,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   // Cache-first: check for a fresh row (updated_at within the last 30 days)
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const cached = await db
-    .select()
-    .from(places)
-    .where(
-      and(
-        eq(places.place_id, placeId),
-        gt(places.updated_at, thirtyDaysAgo)
-      )
-    )
-    .limit(1);
+  const cached = db
+    ? await db
+        .select()
+        .from(places)
+        .where(
+          and(eq(places.place_id, placeId), gt(places.updated_at, thirtyDaysAgo))
+        )
+        .limit(1)
+    : [];
 
   if (cached.length > 0) {
     // Cache HIT — return DB row without any Google API call (T-01-09)
@@ -101,11 +100,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   // Derive default visit duration from place types (for Phase 2 optimizer)
   const defaultVisitDurationMinutes = durationForTypes(details.types);
 
-  // Upsert into the shared places cache
+  // Upsert into the shared places cache when DB is available.
   // On conflict of place_id: update all detail columns and refresh updated_at
-  await db
-    .insert(places)
-    .values({
+  if (db) {
+    await db
+      .insert(places)
+      .values({
       place_id: details.placeId,
       display_name: details.displayName,
       address: details.formattedAddress,
@@ -141,6 +141,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         updated_at: new Date(),
       },
     });
+  }
 
   return NextResponse.json({
     placeId: details.placeId,

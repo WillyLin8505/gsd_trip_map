@@ -62,6 +62,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const { placeIds, numDays, travelDate } = parsed.data;
 
+  // The optimizer's only source of resolved places is the DB cache — without a
+  // configured database there is nothing to optimize.
+  if (!db) {
+    const error: OptimizeErrorResponse = {
+      error: "Server configuration error: database is not configured",
+    };
+    return NextResponse.json(error, { status: 500 });
+  }
+
   // ------------------------------------------------------------------
   // Step 2: Load resolved places from the shared places cache
   // ------------------------------------------------------------------

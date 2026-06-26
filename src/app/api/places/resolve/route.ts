@@ -97,29 +97,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       continue;
     }
 
-    // Upsert into the shared places cache (one DB write per unique place)
-    // On conflict of place_id, update the mutable fields and refresh updated_at
-    await db
-      .insert(places)
-      .values({
-        place_id: placeResult.placeId,
-        display_name: placeResult.displayName,
-        address: placeResult.formattedAddress,
-        lat: placeResult.lat,
-        lng: placeResult.lng,
-        hours_unknown: false,
-        updated_at: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: places.place_id,
-        set: {
+    // Upsert into the shared places cache when DB is available.
+    if (db) {
+      await db
+        .insert(places)
+        .values({
+          place_id: placeResult.placeId,
           display_name: placeResult.displayName,
           address: placeResult.formattedAddress,
           lat: placeResult.lat,
           lng: placeResult.lng,
+          hours_unknown: false,
           updated_at: new Date(),
-        },
-      });
+        })
+        .onConflictDoUpdate({
+          target: places.place_id,
+          set: {
+            display_name: placeResult.displayName,
+            address: placeResult.formattedAddress,
+            lat: placeResult.lat,
+            lng: placeResult.lng,
+            updated_at: new Date(),
+          },
+        });
+    }
 
     results.push({
       placeId: placeResult.placeId,
