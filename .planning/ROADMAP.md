@@ -92,12 +92,9 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 
 - [ ] 03-02-PLAN.md — Anonymous end-to-end slice: PlaceInputPanel + ResolvedPlaceList + ItineraryView/DayCard + page wiring (DISP-01, AUTH-01)
 
-**Wave 2** *(blocked on Wave 1)*
+**Wave 2** *(blocked on Wave 1 — 03-03 and 03-04 run in parallel)*
 
 - [ ] 03-03-PLAN.md — Rich PlaceRow with opening hours/price via details fetch + hoursUnknown badge + UnscheduledAlert + ProgressSteps (DISP-02)
-
-**Wave 3** *(blocked on Wave 2)*
-
 - [ ] 03-04-PLAN.md — MapView (per-day polylines, numbered markers, InfoWindow) + responsive ResultsLayout (DISP-03, DISP-04)
 
 ### Phase 4: Auth + Persistence + Sharing
