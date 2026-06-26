@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-06-26T15:50:35Z",
+  "phase": "post-v1",
+  "phase_name": "feature-extensions",
+  "phase_dir": "docs/superpowers/specs",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": "v1", "name": "Phases 01-05 code-complete (foundation, optimizer, core-ui, auth/save/share, polish)", "status": "done"},
+    {"id": "deploy", "name": "Deployed on Cloudflare Workers via OpenNext + Hyperdrive; Workers Builds CI auto-deploys on push to main", "status": "done", "note": "live: https://gsd-trip-map.sssss971412.workers.dev"},
+    {"id": "partA", "name": "Part A: input redesign + AI city inference (city optional, Claude Haiku infer, numDays/travelDate UI)", "status": "done", "note": "merged to main, deployed; spec+plan in docs/superpowers/"},
+    {"id": "subC-spec", "name": "Sub-project C spec: interactive single-day editing (add place to closest day; per-day auto-arrange + meals)", "status": "done", "commit": "ada233b", "note": "docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md"}
+  ],
+  "remaining_tasks": [
+    {"id": "subC-3cat", "name": "Update sub-project C spec for 3 categories (餐廳/點心/行程) auto-classified from Google place_types: only 餐廳 gets lunch/dinner slots; 點心+行程 are route stops", "status": "not_started"},
+    {"id": "subC-plan", "name": "Plan sub-project C (gsd-plan-phase) then execute (gsd-execute-phase): scheduleSingleDay + POST /api/optimize/day + results-page F1 paste-to-add + F2 per-day auto-arrange", "status": "not_started"},
+    {"id": "partB", "name": "Part B: AI itinerary/place recommendations from a user-configured source URL + admin backend (separate brainstorm/spec)", "status": "not_started"}
+  ],
+  "blockers": [],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {"action": "Set ANTHROPIC_API_KEY as a Cloudflare Worker secret (wrangler secret put ANTHROPIC_API_KEY) AND in local .env.local", "context": "Part A AI city inference is fail-open; without the key it is skipped (manual city still works)", "blocking": false},
+    {"action": "GCP cost controls: billing alerts + daily quota cap + API key restrictions (docs/cost-controls.md steps 1-3)", "context": "Phase 01 pre-production blocker T-01-13", "blocking": false},
+    {"action": "375px mobile UAT walkthrough (Phase 05 SC4) incl. the new duration editor tap target", "context": "deferred manual check", "blocking": false},
+    {"action": "Supabase Auth URL Configuration: add https://gsd-trip-map.sssss971412.workers.dev + /auth/callback for Google OAuth/email-confirm on the live domain", "context": "needed for live login", "blocking": false}
+  ],
+  "decisions": [
+    {"decision": "Deploy on Cloudflare (not Vercel/WSL-direct): OpenNext adapter, node-postgres (pg) + pg-cloudflare + Hyperdrive, per-request getDb() via React cache() with maxUses:1, serverExternalPackages for pg", "rationale": "Vercel free quota hit; postgres-js hangs on Workers; module-level DB client hangs; Windows OpenNext build broken → build on Cloudflare Linux via Workers Builds", "phase": "deploy"},
+    {"decision": "DATABASE_URL uses Supabase IPv4 session pooler (aws-1-ap-northeast-1, :5432, sslmode=require); Hyperdrive config also has sslmode=require", "rationale": "direct db.<ref>.supabase.co host is IPv6-only, unreachable from Windows/Workers", "phase": "deploy"},
+    {"decision": "package-lock.json MUST be generated on Linux/npm10 (committed cfc3760)", "rationale": "Windows/npm11 lockfile fails `npm ci` on Cloudflare runners", "phase": "deploy"},
+    {"decision": "Part A: city optional; infer via Claude Haiku from place list (fail-open); buildCityBias returns null for unknown cities and textSearch folds city into query (50km radius cap fix)", "rationale": "user wants AI to detect city; non-Taiwan cities broke on 100km bias", "phase": "partA"},
+    {"decision": "Sub-project C: only 餐廳 gets meal slots (lunch 11:30-13:30 / dinner 17:30-19:30); 點心+行程 are shortest-path route stops; categories auto from place_types", "rationale": "user clarified 3-type taxonomy + snack = normal short stop", "phase": "subC"}
+  ],
+  "uncommitted_files": [".planning/STATE.md (hook-updated)", "skills-lock.json + .agents/skills/* (from npx skills add — gstack/cloudflare/gsd)"],
+  "next_action": "Update docs/superpowers/specs/2026-06-26-interactive-day-editing-design.md to use the 3-category classifier (餐廳/點心/行程 from place_types; only 餐廳 → meal slots), then run gsd-plan-phase for sub-project C.",
+  "context_notes": "GSD is now installed (skills+agents available). Going forward, route new work through GSD (gsd-phase to add to ROADMAP → gsd-discuss-phase → gsd-plan-phase → gsd-execute-phase) instead of the superpowers flow used earlier this session. Paused at ~78% context. Branch: main (all pushed). Local dev: run via `node node_modules/next/dist/bin/next dev -p 4000` (npm run dev fails — no next.cmd shim on this Windows/Linux-node_modules mix; win32 native bindings were added via --no-save). Cloudflare builds/deploys run from WSL or Workers Builds CI."
+}

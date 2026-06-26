@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 05
-current_phase_name: polish-edit-cost
+current_phase: 04
+current_phase_name: auth-save
 status: implemented
-stopped_at: Phase 05 Waves 1–3 implemented (duration override, rate limit, debounce); Wave 4 (375px walkthrough) needs browser; tsc clean
-last_updated: "2026-06-26T17:45:00.000Z"
+stopped_at: context exhaustion at 78% (2026-06-26)
+last_updated: "2026-06-26T15:32:03.809Z"
 last_activity: 2026-06-26
-last_activity_desc: Implemented Phase 05 — INPUT-05 duration override, per-subject daily rate limit (api_usage), 300ms input debounce; tsc clean, 4 new test files
+last_activity_desc: Phase 05 implemented (duration override, rate limit, debounce)
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
-  percent: 98
+  completed_phases: 3
+  total_plans: 13
+  completed_plans: 11
+  percent: 60
 ---
 
 # Project State
@@ -143,11 +143,12 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T16:30:00.000Z
-Stopped at: Phase 03 closed — UAT 2/2 pass (browser-verified). 2 non-blocking gaps carried (see 03-UAT.md Gaps).
+Last session: 2026-06-26T15:32:03.784Z
+Stopped at: context exhaustion at 78% (2026-06-26)
 Resume action: Plan Phase 04 (auth-save) — create .planning/phases/04-auth-save/ + plans
 Resume file: .planning/phases/04-auth-save/04-01-PLAN.md (to be created)
 
 ### Carried non-blocking concerns (from Phase 03 UAT)
+
 - Time-slot values reported possibly "off by hours" in browser; no TZ conversion found in code; could not reproduce server-side. Treat feature as working pending explicit report.
 - place-row.tsx summarizeHours() shows openingHours[0] (Sunday) regardless of travel day — candidate fix in Phase 5.
