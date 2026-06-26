@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db";
-import { places } from "@/lib/db/schema";
+import { places, type Place } from "@/lib/db/schema";
 import { computeRouteMatrix, type RouteMatrixCoord } from "@/lib/google/routes-client";
 import { scheduleSingleDay } from "@/lib/optimizer/day";
 import type { OptimizerPlace } from "@/lib/optimizer/types";
@@ -81,10 +81,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // -------------------------------------------------------------------------
   // Step 4: Load places from DB cache
   // -------------------------------------------------------------------------
-  const rows = await db
-    .select()
-    .from(places)
-    .where(inArray(places.place_id, placeIds));
+  let rows: Place[];
+  try {
+    rows = await db
+      .select()
+      .from(places)
+      .where(inArray(places.place_id, placeIds));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const error: OptimizeDayErrorResponse = {
+      error: `Database error: ${message}`,
+    };
+    return NextResponse.json(error, { status: 500 });
+  }
 
   // -------------------------------------------------------------------------
   // Step 5: Reject requests with unresolved placeIds (T-06-03)

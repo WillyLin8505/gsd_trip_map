@@ -261,6 +261,28 @@ describe("POST /api/optimize/day — configuration errors", () => {
     expect(body.error).toContain("GOOGLE_PLACES_API_KEY");
     expect(computeRouteMatrix).not.toHaveBeenCalled();
   });
+
+  it("returns 500 with OptimizeDayErrorResponse shape when DB query throws (WR-05)", async () => {
+    // Simulate a Hyperdrive connection failure / query timeout.
+    // The route must catch the error and return a typed 500 — not an unhandled rejection.
+    const whereMock = vi.fn().mockRejectedValue(new Error("Connection timeout"));
+    const fromMock = vi.fn().mockReturnValue({ where: whereMock });
+    vi.mocked(db!.select).mockReturnValue({
+      from: fromMock,
+    } as unknown as ReturnType<NonNullable<typeof db>["select"]>);
+
+    const res = await POST(
+      makeRequest({ placeIds: ["ChIJp1"], reorder: false })
+    );
+
+    expect(res.status).toBe(500);
+    const body = (await res.json()) as { error: string };
+    // Must have an "error" string field (OptimizeDayErrorResponse shape)
+    expect(typeof body.error).toBe("string");
+    expect(body.error).toContain("Database error");
+    // Routes API must NOT be called after a DB failure
+    expect(computeRouteMatrix).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
