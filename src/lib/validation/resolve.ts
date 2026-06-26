@@ -14,11 +14,11 @@ export const resolveRequestSchema = z.object({
     .min(1, "At least one input is required"),
 
   /**
-   * Destination city — REQUIRED before any lookup.
-   * Applied as locationBias on every Text Search to prevent cross-city mismatches.
-   * Example: "台北市", "高雄市", "京都市"
+   * Destination city — OPTIONAL. When omitted/blank, the resolve route infers it
+   * from the inputs (Claude Haiku) and uses that for locationBias. When provided,
+   * it is used directly. Example: "台北市", "高雄市", "京都市"
    */
-  city: z.string().min(1, "City is required — it is applied as locationBias on every lookup"),
+  city: z.string().trim().min(1).optional(),
 
   /**
    * Optional explicit geographic bias.
@@ -43,6 +43,21 @@ export interface ResolvedPlace {
   formattedAddress: string;
   lat: number;
   lng: number;
+}
+
+/** NOT_FOUND marker for a single input that did not resolve. */
+export interface NotFoundMarker {
+  original_query: string;
+  status: "NOT_FOUND";
+}
+
+/** Response body of POST /api/places/resolve. */
+export interface ResolveResponse {
+  places: Array<ResolvedPlace | NotFoundMarker>;
+  /** City actually used for biasing (provided or inferred); null if none. */
+  resolvedCity: string | null;
+  /** True when resolvedCity was inferred by the LLM (not user-provided). */
+  cityInferred: boolean;
 }
 
 /** Standard error response shape from route handlers */
