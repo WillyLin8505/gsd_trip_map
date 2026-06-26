@@ -5,16 +5,16 @@ milestone_name: milestone
 current_phase: 06
 current_phase_name: interactive-day-editing
 status: executing
-stopped_at: Phase 06 Plan 01 (F1 add-place) complete; ready for Plan 02 (F2 auto-arrange)
-last_updated: "2026-06-26T17:12:15Z"
+stopped_at: Phase 06 Plan 02 (F2 auto-arrange) complete; deferred Task 3 browser walkthrough for human
+last_updated: "2026-06-26T17:28:23Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 06 Plan 01 executed — F1 end-to-end complete (pure primitives + route + UI)
+last_activity_desc: Phase 06 Plan 02 executed — F2 classifyPlace + scheduleSingleDay(reorder=true) + 273 tests green
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 12
-  percent: 56
+  completed_plans: 13
+  percent: 87
 ---
 
 # Project State
@@ -136,6 +136,9 @@ Recent decisions affecting current work:
 - [06-01]: replaceDay is a functional setOptimizeResult updater — spreads prev and swaps only matching day (Pitfall 5: preserves suggestedDays)
 - [06-01]: nextMonday() inlined in day route (not exported from optimizer/index.ts) — required for ScheduleTimesOpts.travelDate default (Pitfall 3)
 - [06-01]: Per-day isArranging/arrangeError state local to DayCard — other days remain interactive during F2 arrange
+- [06-02]: classifyPlace pure allowlist — RESTAURANT_TYPES/SNACK_TYPES Sets; restaurant wins ties; null→attraction (T-06-06 safe default)
+- [06-02]: placeTypes optional field on OptimizerPlace — zero breaking changes to /api/optimize route; threaded only in /api/optimize/day
+- [06-02]: A-submatrix NN+2-opt index map-back via aOrder.map(i=>A[i]); clock-walk uses ONLY travel+visitDuration (Pitfalls 6+8)
 
 ### Pending Todos
 
@@ -153,7 +156,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26
+Last session: 2026-06-26T17:29:40.339Z
 Stopped at: Phase 06 Plan 01 complete (F1 end-to-end: pickClosestDay + scheduleSingleDay(reorder=false) + POST /api/optimize/day + DayPlaceAdder + replaceDay). Plan 02 (F2 auto-arrange) is next.
 Resume action: /gsd-execute-phase 6 — execute Plan 02 (06-02 F2 auto-arrange / EDIT-02)
 Resume file: .planning/phases/06-interactive-day-editing/06-02-PLAN.md
