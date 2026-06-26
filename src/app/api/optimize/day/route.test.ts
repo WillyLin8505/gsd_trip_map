@@ -382,3 +382,79 @@ describe("POST /api/optimize/day — happy path reorder=false", () => {
     );
   });
 });
+
+// ---------------------------------------------------------------------------
+// Happy path (200) — reorder=true (F2 auto-arrange)
+// ---------------------------------------------------------------------------
+
+describe("POST /api/optimize/day — happy path reorder=true", () => {
+  it("returns 200 and calls scheduleSingleDay with mode { reorder:true, dayNumber }", async () => {
+    const placeIds = ["ChIJp1", "ChIJp2", "ChIJp3"];
+    const rows = placeIds.map((id, i) =>
+      makePlaceRow({
+        place_id: id,
+        display_name: `Place ${i + 1}`,
+        lat: 25.0 + i * 0.01,
+        lng: 121.5 + i * 0.01,
+        place_types: i === 0 ? ["restaurant"] : ["tourist_attraction"],
+      })
+    );
+    mockDbReturn(rows);
+
+    const matrix = makeMatrix(3, 15);
+    vi.mocked(computeRouteMatrix).mockResolvedValue(matrix);
+
+    const scheduleResult = makeScheduleResult(placeIds);
+    vi.mocked(scheduleSingleDay).mockReturnValue(scheduleResult);
+
+    const res = await POST(
+      makeRequest({ placeIds, reorder: true, dayNumber: 2 })
+    );
+
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      day: { dayNumber: number; visits: unknown[] };
+      unscheduled: unknown[];
+    };
+
+    // Response shape: { day, unscheduled } NOT a full OptimizeResult (Pitfall 5)
+    expect(body).toHaveProperty("day");
+    expect(body).toHaveProperty("unscheduled");
+    expect(body).not.toHaveProperty("suggestedDays");
+
+    // scheduleSingleDay called with reorder=true and correct dayNumber
+    expect(scheduleSingleDay).toHaveBeenCalledTimes(1);
+    expect(scheduleSingleDay).toHaveBeenCalledWith(
+      expect.any(Array),
+      expect.any(Array),
+      expect.objectContaining({ travelDate: expect.any(String) }),
+      { reorder: true, dayNumber: 2 }
+    );
+  });
+
+  it("threads place_types into OptimizerPlace.placeTypes from DB row", async () => {
+    // Verify the route passes place_types from DB so classifyPlace can classify
+    const placeIds = ["ChIJrestaurant", "ChIJmuseum"];
+    const rows = [
+      makePlaceRow({ place_id: "ChIJrestaurant", place_types: ["restaurant"] }),
+      makePlaceRow({ place_id: "ChIJmuseum", place_types: ["museum"] }),
+    ];
+    mockDbReturn(rows);
+    vi.mocked(computeRouteMatrix).mockResolvedValue(makeMatrix(2));
+    vi.mocked(scheduleSingleDay).mockReturnValue(makeScheduleResult(placeIds));
+
+    await POST(makeRequest({ placeIds, reorder: true, dayNumber: 1 }));
+
+    // Verify the OptimizerPlace[] passed to scheduleSingleDay has placeTypes set
+    const callArgs = vi.mocked(scheduleSingleDay).mock.calls[0];
+    const optimizerPlaces = callArgs[0] as Array<{ placeTypes?: string[] | null }>;
+    const restaurantPlace = optimizerPlaces.find(
+      (p) => (p as { placeId?: string }).placeId === "ChIJrestaurant"
+    );
+    expect(restaurantPlace?.placeTypes).toEqual(["restaurant"]);
+    const museumPlace = optimizerPlaces.find(
+      (p) => (p as { placeId?: string }).placeId === "ChIJmuseum"
+    );
+    expect(museumPlace?.placeTypes).toEqual(["museum"]);
+  });
+});
