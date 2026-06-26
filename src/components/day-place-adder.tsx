@@ -206,6 +206,13 @@ export function DayPlaceAdder({
         prev.some((p) => p.placeId === newPlace.placeId) ? prev : [...prev, newPlace]
       );
       setInputValue(""); // clear on success
+    } catch {
+      // WR-06: outer catch — any unexpected throw between the inner try-catches
+      // (e.g. pickClosestDay on empty daysWithCoords, or a malformed API shape)
+      // must surface as a visible error, not an unhandled promise rejection.
+      // Inner try-catches handle the known network-failure paths and return early;
+      // this catch only fires for truly unexpected errors.
+      setError("加入地點失敗，請稍後再試");
     } finally {
       setLoading(false);
     }
