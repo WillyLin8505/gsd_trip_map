@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 02
-current_phase_name: optimization-engine
-status: verifying
-stopped_at: Verified 01-VERIFICATION.md — status human_needed (5 items require runtime/operator confirmation)
-last_updated: "2026-06-25T16:08:21.292Z"
-last_activity: 2026-06-25
-last_activity_desc: Phase 02 execution started
+current_phase: 03
+current_phase_name: core-ui
+status: planned
+stopped_at: Phase 3 plans verified — ready for execution
+last_updated: "2026-06-26T08:00:00.000Z"
+last_activity: 2026-06-26
+last_activity_desc: Phase 03 plans verified (4 plans, 4 waves sequential)
 progress:
   total_phases: 5
   completed_phases: 2
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-25)
 
 **Core value:** 貼上景點清單就能得到一份可直接執行的最佳化行程（省去手動查資料 + 手動排順序的麻煩）
-**Current focus:** Phase 02 — optimization-engine
+**Current focus:** Phase 03 — core-ui
 
 ## Current Position
 
-Phase: 02 (optimization-engine) — EXECUTING
-Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-06-25 — Phase 02 execution started
+Phase: 02 (optimization-engine) — VERIFIED (passed)
+Phase: 03 (core-ui) — NEXT
+Status: Phase 02 complete and verified — ready to plan Phase 03
+Last activity: 2026-06-26 — Phase 02 verification passed
 
-Progress: [██████████] 100%
+Progress: [██████████] 40% (2/5 phases complete)
 
 ## Verification Status
 
@@ -41,28 +41,40 @@ Progress: [██████████] 100%
 
 - Score: 4/5 must-haves verified in code
 - Status: human_needed
-- Blocking items before Phase 02 / production:
+- Blocking items before production:
   1. End-to-end POST /api/places/resolve with live credentials (SC1)
   2. Cache hit verification — GET /api/places/details returns cached: true on second call (SC2)
   3. Google Maps short URL resolution with real maps.app.goo.gl URL (SC3)
   4. **GCP cost controls** — billing alerts ($10/$50/$100), daily quota cap, API key restrictions (SC5 / T-01-13 OPEN BLOCKER)
   5. City-specific locationBias accuracy for non-Taiwan destinations (SC4 caveat)
 
+**Phase 02 verification:** `.planning/phases/02-optimization-engine/02-VERIFICATION.md`
+
+- Score: 5/5 must-haves verified
+- Status: **passed**
+- All SCHED-01 through SCHED-05 requirements verified
+- 161/161 tests pass across 11 test files
+- hoursUnknown rule correctly implemented (slot retained, warning emitted)
+- computeRouteMatrix called exactly once per optimize request
+- Optimizer modules are pure (zero I/O: no fetch, DB, or process.env)
+
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 7
+- Average duration: ~6 min/plan
+- Total execution time: ~0.67 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| — | — | — | — |
+| Phase 01 | 4 | ~34 min | ~8.5 min |
+| Phase 02 | 3 | ~20 min | ~6.7 min |
 
-**Recent Trend:** No data yet
+**Recent Trend:** Fast execution with TDD compliance across all plans.
+
 | Phase 01 P01 | 19 | 4 tasks | 16 files |
 | Phase 01 P02 | 4 | - tasks | - files |
 | Phase 01-foundation-api-integration P03 | 6 | 3 tasks | 5 files |
@@ -97,24 +109,26 @@ Recent decisions affecting current work:
 - [Phase ?]: getOpenWindow() extracts concrete openTime/closeTime for arithmetic; separate from isOpenAt() boolean
 - [Phase ?]: splitIntoDays null-sentinel for overflow mode
 - [Phase ?]: Optimizer never treats infeasible pairs as zero-cost travel
-- [Phase ?]: Semantically more correct than 400; callers know exactly what to resolve first
+- [Phase ?]: 422 Semantically more correct than 400; callers know exactly what to resolve first
 - [Phase ?]: Same GCP server key for both Places and Routes APIs — one env var, same billing account (02-CONTEXT.md)
 - [Phase ?]: Text-resolved places without detail fetch always get a valid duration in OptimizerPlace
 
 ### Pending Todos
 
 - Complete GCP cost controls checklist (docs/cost-controls.md steps 1-3) — REQUIRED before production traffic
+- Complete Phase 01 human verification checklist (5 runtime/operator items — see Verification Status above)
 
 ### Blockers/Concerns
 
 - [Phase 1 RESOLVED]: Google Maps short URL parsing implemented and tested via redirect-follow + coordinate extraction (01-04)
 - [Phase 1 OPEN — pre-production blocker]: T-01-13: GCP billing alerts ($10/$50/$100), hard daily Places API quota cap, and API key restrictions not configured — operator skipped these in Task 4. Must complete docs/cost-controls.md steps 1-3 before sending user traffic.
 - [Phase 1 WARNING]: buildCityBias() ignores city parameter; returns hardcoded Taiwan-center (23.6978, 120.9605). Adequate for Taiwan-focused Phase 1; Phase 2 or 3 should geocode city for correct non-Taiwan bias.
-- [Phase 1]: Opening hours coverage rate for Taiwanese attractions is unknown — validate empirically early in Phase 2/3
+- [Phase 1]: Opening hours coverage rate for Taiwanese attractions is unknown — validate empirically early in Phase 3
+- [Phase 2 RESOLVED]: All optimizer functions implemented and tested; 161/161 tests pass
 - [Phase 2]: Cross-city geographic clustering deferred to v2 — ensure data model supports it to avoid schema migrations
 
 ## Session Continuity
 
-Last session: 2026-06-25T16:08:21.248Z
-Stopped at: Phase 01 verification — human_needed. Next step: complete human verification checklist (especially GCP cost controls T-01-13), then advance to Phase 02.
-Resume file: None
+Last session: 2026-06-26T00:01:35.156Z
+Stopped at: Phase 3 UI-SPEC approved
+Resume file: .planning/phases/03-core-ui/03-UI-SPEC.md
