@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resolveRequestSchema, type ResolvedPlace, type ErrorResponse } from "@/lib/validation/resolve";
+import { resolveRequestSchema, type ResolvedPlace, type ErrorResponse, type ResolveResponse } from "@/lib/validation/resolve";
 import { textSearch, type LocationBias } from "@/lib/google/places-client";
 import { resolveMapsUrl } from "@/lib/google/url-resolver";
 import { getDb } from "@/lib/db";
 import { places } from "@/lib/db/schema";
 import { getUser } from "@/lib/auth/get-user";
 import { checkAndCount, subjectFor } from "@/lib/ratelimit/check";
+import { inferCity } from "@/lib/ai/infer-city";
 
 /**
  * POST /api/places/resolve
@@ -71,6 +72,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(error, { status: 429 });
   }
 
+  // City: use the provided one, else infer from the inputs (fail-open).
+  let effectiveCity = city ?? "";
+  let cityInferred = false;
+  if (!effectiveCity) {
+    const inferred = await inferCity(inputs, process.env.ANTHROPIC_API_KEY);
+    if (inferred) {
+      effectiveCity = inferred;
+      cityInferred = true;
+    }
+  }
+
   // Server-only API key (T-01-01) — never reference from client components
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   if (!apiKey) {
@@ -105,7 +117,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } else {
       // Text path: city-based locationBias Text Search (T-01-04)
       placeResult = await textSearch(input, {
-        city,
+        city: effectiveCity,
         apiKey,
         locationBias: bias,
       });
@@ -155,5 +167,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
   }
 
-  return NextResponse.json(results);
+  const responseBody: ResolveResponse = {
+    places: results,
+    resolvedCity: effectiveCity || null,
+    cityInferred,
+  };
+  return NextResponse.json(responseBody);
 }
