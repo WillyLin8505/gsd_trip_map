@@ -229,12 +229,22 @@ export function PlaceInputPanel() {
       throw new Error("自動安排失敗，請稍後再試");
     }
 
-    const { day } = (await res.json()) as {
+    const { day, unscheduled } = (await res.json()) as {
       day: { dayNumber: number; visits: ScheduledVisit[] };
       unscheduled: Array<{ placeId: string; reason: string }>;
     };
 
+    // CR-02: Update the day first so the scheduled portion renders immediately.
+    // Then surface any unscheduled places — throw so DayCard's catch can display
+    // the message. The day has already been replaced so scheduled visits still show.
     replaceDay(dayNumber, day);
+
+    if (unscheduled.length > 0) {
+      // reason already contains a human-readable zh-TW message with the display
+      // name (e.g. "台北101 在行程當天休息，無法安排"). Join multiple reasons.
+      const summary = unscheduled.map((u) => u.reason).join("；");
+      throw new Error(`自動安排完成，但以下地點無法排入當天：${summary}`);
+    }
   }
 
   // ---------------------------------------------------------------------------

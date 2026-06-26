@@ -52,8 +52,17 @@ export function DayCard({ day, detailsById, onDurationChange, onAutoArrange }: D
     setIsArranging(true);
     try {
       await onAutoArrange(day.dayNumber);
-    } catch {
-      setArrangeError("自動安排失敗，請稍後再試");
+    } catch (err) {
+      // CR-02: When handleAutoArrange throws with a specific message (e.g.
+      // "自動安排完成，但以下地點無法排入當天：…" for partial success with
+      // unscheduled places), display that message so the user knows which
+      // places couldn't be scheduled. Fall back to the generic failure copy
+      // for unexpected network/server errors.
+      setArrangeError(
+        err instanceof Error && err.message
+          ? err.message
+          : "自動安排失敗，請稍後再試"
+      );
     } finally {
       setIsArranging(false);
     }
