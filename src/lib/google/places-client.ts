@@ -128,25 +128,89 @@ export async function textSearch(
 }
 
 /**
+ * Coordinate entries for Taiwanese cities.
+ *
+ * All coordinate values are [ASSUMED] from public lat/lng sources (Wikipedia,
+ * OpenStreetMap). Not verified against an authoritative geocoding API.
+ *
+ * Keys are provided in both short form (prefix) and long form (with 市/縣) so
+ * the lookup works whether the user types "高雄" or "高雄市".
+ */
+const TAIWAN_CITY_COORDS: Record<string, { lat: number; lng: number; radius: number }> = {
+  // Special Municipalities
+  '台北': { lat: 25.0330, lng: 121.5654, radius: 20000 },    // [ASSUMED]
+  '台北市': { lat: 25.0330, lng: 121.5654, radius: 20000 },  // [ASSUMED]
+  '新北': { lat: 25.0129, lng: 121.4651, radius: 30000 },    // [ASSUMED]
+  '新北市': { lat: 25.0129, lng: 121.4651, radius: 30000 },  // [ASSUMED]
+  '桃園': { lat: 24.9936, lng: 121.3010, radius: 25000 },    // [ASSUMED]
+  '桃園市': { lat: 24.9936, lng: 121.3010, radius: 25000 },  // [ASSUMED]
+  '台中': { lat: 24.1477, lng: 120.6736, radius: 25000 },    // [ASSUMED]
+  '台中市': { lat: 24.1477, lng: 120.6736, radius: 25000 },  // [ASSUMED]
+  '台南': { lat: 22.9999, lng: 120.2270, radius: 25000 },    // [ASSUMED]
+  '台南市': { lat: 22.9999, lng: 120.2270, radius: 25000 },  // [ASSUMED]
+  '高雄': { lat: 22.6273, lng: 120.3014, radius: 25000 },    // [ASSUMED]
+  '高雄市': { lat: 22.6273, lng: 120.3014, radius: 25000 },  // [ASSUMED]
+  // Counties
+  '基隆': { lat: 25.1276, lng: 121.7392, radius: 15000 },    // [ASSUMED]
+  '基隆市': { lat: 25.1276, lng: 121.7392, radius: 15000 },  // [ASSUMED]
+  '新竹': { lat: 24.8039, lng: 120.9647, radius: 20000 },    // [ASSUMED]
+  '新竹市': { lat: 24.8039, lng: 120.9647, radius: 20000 },  // [ASSUMED]
+  '嘉義': { lat: 23.4801, lng: 120.4491, radius: 20000 },    // [ASSUMED]
+  '嘉義市': { lat: 23.4801, lng: 120.4491, radius: 20000 },  // [ASSUMED]
+  '宜蘭': { lat: 24.7021, lng: 121.7378, radius: 25000 },    // [ASSUMED]
+  '宜蘭縣': { lat: 24.7021, lng: 121.7378, radius: 25000 },  // [ASSUMED]
+  '花蓮': { lat: 23.9910, lng: 121.6015, radius: 25000 },    // [ASSUMED]
+  '花蓮縣': { lat: 23.9910, lng: 121.6015, radius: 25000 },  // [ASSUMED]
+  '台東': { lat: 22.7583, lng: 121.1444, radius: 25000 },    // [ASSUMED]
+  '台東縣': { lat: 22.7583, lng: 121.1444, radius: 25000 },  // [ASSUMED]
+  '澎湖': { lat: 23.5711, lng: 119.5793, radius: 20000 },    // [ASSUMED]
+  '澎湖縣': { lat: 23.5711, lng: 119.5793, radius: 20000 },  // [ASSUMED]
+  '金門': { lat: 24.4493, lng: 118.3765, radius: 15000 },    // [ASSUMED]
+  '金門縣': { lat: 24.4493, lng: 118.3765, radius: 15000 },  // [ASSUMED]
+};
+
+/**
  * Builds a city-centered locationBias from the city name.
  *
- * In production this would use geocoding to resolve a real lat/lng from the city name.
- * For Phase 1 skeleton, we use a textQuery prefix strategy and return a broad circle
- * centered on a default point; the city parameter is included in the textQuery
- * construction at the call site via context.
+ * Replaces the Phase 1 skeleton that always returned the Taiwan center (bug fix).
  *
- * Plan 04 will replace this with a proper geocode-based city resolution.
+ * Lookup strategy:
+ *   1. Trim whitespace
+ *   2. Direct lookup (e.g. "高雄市" → 高雄市 entry)
+ *   3. 2-char prefix fallback (e.g. "高雄" if direct lookup missed)
+ *   4. 3-char prefix fallback (handles 3-char names like "新北市" → "新北")
+ *
+ * On miss (non-Taiwan cities like "京都市"): returns wider 100km Taiwan-center
+ * circle so textQuery city name still guides resolution via Google Places text search.
+ *
+ * Security: lookup is a fixed Record keyed by normalized string.
+ * No dynamic property execution, no prototype pollution (T-03-02).
  */
-function buildCityBias(city: string): LocationBias {
-  // Phase 1 skeleton: return a broad bias that allows the city name in the textQuery
-  // to guide resolution. The radius is intentionally large (50km) so it works
-  // across different city sizes without requiring geocoding in this plan.
-  // locationBias is still required by the plan spec and returned here.
+export function buildCityBias(city: string): LocationBias {
+  const normalized = city.trim();
+
+  const lookup =
+    TAIWAN_CITY_COORDS[normalized] ??
+    TAIWAN_CITY_COORDS[normalized.slice(0, 2)] ??
+    TAIWAN_CITY_COORDS[normalized.slice(0, 3)] ??
+    null;
+
+  if (lookup) {
+    return {
+      circle: {
+        center: { latitude: lookup.lat, longitude: lookup.lng },
+        radius: lookup.radius,
+      },
+    };
+  }
+
+  // Fallback for unrecognized cities (non-Taiwan destinations).
+  // A wider 100km radius ensures the textQuery city name can still
+  // guide Place resolution even when we have no coordinates.
   return {
     circle: {
-      // Default center: roughly center of Taiwan (plan 04 will geocode the city)
-      center: { latitude: 23.6978, longitude: 120.9605 },
-      radius: 50000,
+      center: { latitude: 23.6978, longitude: 120.9605 }, // Taiwan geographic center
+      radius: 100000, // wider fallback — textQuery still disambiguates
     },
   };
 }
