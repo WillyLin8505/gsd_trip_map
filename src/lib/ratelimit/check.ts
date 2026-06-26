@@ -48,25 +48,32 @@ function today(): string {
 export async function checkAndCount(subject: string, amount = 1): Promise<RateLimitResult> {
   if (!db) return { allowed: true, count: 0, limit: DAILY_LOOKUP_LIMIT };
 
-  const day = today();
-  const [existing] = await db
-    .select({ count: apiUsage.count })
-    .from(apiUsage)
-    .where(and(eq(apiUsage.subject, subject), eq(apiUsage.day, day)))
-    .limit(1);
+  // Fail OPEN: a limiter is a guardrail, not a hard dependency. If its store is
+  // unreachable (DB down, table missing, DNS failure) we must not break the core
+  // resolve flow — allow the request rather than 500.
+  try {
+    const day = today();
+    const [existing] = await db
+      .select({ count: apiUsage.count })
+      .from(apiUsage)
+      .where(and(eq(apiUsage.subject, subject), eq(apiUsage.day, day)))
+      .limit(1);
 
-  const current = existing?.count ?? 0;
-  if (wouldExceed(current, amount, DAILY_LOOKUP_LIMIT)) {
-    return { allowed: false, count: current, limit: DAILY_LOOKUP_LIMIT };
+    const current = existing?.count ?? 0;
+    if (wouldExceed(current, amount, DAILY_LOOKUP_LIMIT)) {
+      return { allowed: false, count: current, limit: DAILY_LOOKUP_LIMIT };
+    }
+
+    await db
+      .insert(apiUsage)
+      .values({ subject, day, count: amount })
+      .onConflictDoUpdate({
+        target: [apiUsage.subject, apiUsage.day],
+        set: { count: sql`${apiUsage.count} + ${amount}` },
+      });
+
+    return { allowed: true, count: current + amount, limit: DAILY_LOOKUP_LIMIT };
+  } catch {
+    return { allowed: true, count: 0, limit: DAILY_LOOKUP_LIMIT };
   }
-
-  await db
-    .insert(apiUsage)
-    .values({ subject, day, count: amount })
-    .onConflictDoUpdate({
-      target: [apiUsage.subject, apiUsage.day],
-      set: { count: sql`${apiUsage.count} + ${amount}` },
-    });
-
-  return { allowed: true, count: current + amount, limit: DAILY_LOOKUP_LIMIT };
 }
