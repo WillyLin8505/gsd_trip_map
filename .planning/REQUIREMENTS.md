@@ -99,5 +99,5 @@
 | AUTH-04 | Phase 4 | Code-complete (CI verify pending) |
 | AUTH-05 | Phase 4 | Code-complete (CI verify pending) |
 | INPUT-05 | Phase 5 | Code-complete (375px walkthrough pending) |
-| EDIT-01 | Phase 6 | Planned |
-| EDIT-02 | Phase 6 | Planned |
+| EDIT-01 | Phase 6 | Code-complete (browser walkthrough pending) |
+| EDIT-02 | Phase 6 | Code-complete (browser walkthrough pending) |
