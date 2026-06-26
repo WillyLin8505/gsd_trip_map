@@ -6,15 +6,15 @@ current_phase: 03
 current_phase_name: core-ui
 status: executing
 stopped_at: Phase 3 plans verified — ready for execution
-last_updated: "2026-06-26T05:49:21.586Z"
+last_updated: "2026-06-26T14:02:00.000Z"
 last_activity: 2026-06-26
-last_activity_desc: Phase 03 execution started
+last_activity_desc: Completed 03-02-PLAN.md (PlaceInputPanel + ItineraryView flow)
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 11
-  completed_plans: 8
-  percent: 40
+  completed_plans: 10
+  percent: 82
 ---
 
 # Project State
@@ -33,7 +33,7 @@ Phase: 03 (core-ui) — NEXT
 Status: Executing Phase 03
 Last activity: 2026-06-26 — Phase 03 execution started
 
-Progress: [██████████] 40% (2/5 phases complete)
+Progress: [████████░░] 82% (10/11 plans complete, 2/5 phases complete)
 
 ## Verification Status
 
@@ -116,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase ?]: globals.css Geist font tokens restored after shadcn init circular var reference bug
 - [Phase ?]: buildCityBias() fixed: 24-entry Taiwan city lookup + 100km fallback for non-Taiwan cities
 - [Phase ?]: Wave-0 RED scaffold pattern: test files import unimplemented components to document DISP-01/02/03 contracts
+- [03-02]: Node vitest env: pure data assertions in component tests (no DOM/jsdom) — compatible with existing test infrastructure
+- [03-02]: resolvedPlaces: ResolvedPlace[] retains lat/lng through all state transitions for 03-04 coordinate join
+- [03-02]: ResultsLayout accepts resolvedPlaces prop now (forwarded unused) to lock interface for 03-04 without signature change
 
 ### Pending Todos
 
@@ -133,6 +136,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-26T05:48:53.691Z
-Stopped at: Phase 3 UI-SPEC approved
-Resume file: .planning/phases/03-core-ui/03-UI-SPEC.md
+Last session: 2026-06-26T14:02:00.000Z
+Stopped at: Completed 03-02-PLAN.md (PlaceInputPanel + ItineraryView flow, 3 tasks, 11 tests GREEN)
+Resume file: .planning/phases/03-core-ui/03-03-PLAN.md
