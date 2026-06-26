@@ -18,8 +18,8 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "REPLACE_WITH_HYPERDRIVE_ID",
-      "localConnectionString": "postgresql://localhost:5432/postgres"
+      "id": "ff759a8e5260459b8af6f8b12f5f0fa5",
+      "localConnectionString": "postgresql://postgres:postgres@localhost:5432/postgres"
     }
   ],
   // Public (build-time-inlined) vars also need to exist at build; secrets are set
