@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 06
 current_phase_name: interactive-day-editing
-status: executing
-stopped_at: Phase 06 Plan 02 (F2 auto-arrange) complete; deferred Task 3 browser walkthrough for human
-last_updated: "2026-06-26T17:28:23Z"
-last_activity: 2026-06-26
-last_activity_desc: Phase 06 Plan 02 executed — F2 classifyPlace + scheduleSingleDay(reorder=true) + 273 tests green
+status: code-complete
+stopped_at: Phase 06 code-complete + code-review-fixed; CI verify (push) + 2 browser walkthroughs pending
+last_updated: "2026-06-27"
+last_activity: 2026-06-27
+last_activity_desc: Phase 06 executed (F1+F2), code-reviewed, 2 critical + 4 warnings fixed; verification human_needed
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 15
-  completed_plans: 13
-  percent: 87
+  completed_plans: 15
+  percent: 100
 ---
 
 # Project State
@@ -28,12 +28,20 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 06 (interactive-day-editing) — EXECUTING
+Phase: 06 (interactive-day-editing) — CODE-COMPLETE (F1 add-place + F2 auto-arrange); code-reviewed & fixed
 Phase: 05 (polish-edit-cost) — IMPLEMENTED (Waves 1–3); Wave 4 (375px walkthrough) needs browser
-Status: Executing Phase 06
-Last activity: 2026-06-26 — Phase 06 execution started
+Status: Phase 06 code-complete — verification human_needed (CI on push + 2 browser walkthroughs)
+Last activity: 2026-06-27 — Phase 06 executed, reviewed, fixed
 
-Progress: [█████████▉] ~98% (5/5 phases code-complete; CI verify + mobile UAT + migration pending)
+Progress: [██████████] 100% (6/6 phases code-complete; CI verify + mobile UAT + GCP cost controls pending)
+
+## Phase 06 closeout (2026-06-27)
+
+- F1 (EDIT-01) + F2 (EDIT-02) shipped: pickClosestDay, scheduleSingleDay (reorder false/true), classifyPlace (餐廳/點心/行程; only 餐廳 → meal slots 11:30–13:30 / 17:30–19:30), POST /api/optimize/day (Zod 1–25 + dup-reject + 422 + typed 500), DayPlaceAdder + per-day 自動安排 button + replaceDay.
+- Code review: 2 critical (silent unscheduled-place loss F1/F2) + 4 warnings fixed; 5 low-severity items deferred (see 06-REVIEW.md WR-01/02, IN-01/02/03).
+- Verification: 5/5 success criteria code-verified (06-VERIFICATION.md, status human_needed).
+- ⚠ Local test toolchain NOT reproducibly runnable (Linux-for-Cloudflare node_modules; typescript/vitest not local — npx fetch is flaky). Authoritative gate = Workers Builds CI on push to main. Tests reported green in executor/fixer runs (275 passed) + 1 clean orchestrator run (273, vitest 4.1.9). Did NOT reinstall node_modules (would risk Cloudflare deploy lockfile).
+- Deferred human-verify: 2 browser walkthroughs (F1 add + NOT_FOUND; F2 reorder + meal-slot + failure-intact).
 
 ## Verification Status
 
