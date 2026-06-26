@@ -24,7 +24,11 @@ export const optimizeDayRequestSchema = z.object({
   placeIds: z
     .array(z.string().min(1, "Each placeId must be a non-empty string"))
     .min(1, "At least one placeId is required")
-    .max(25, "Maximum 25 placeIds per request (Routes API 625-element cap)"),
+    .max(25, "Maximum 25 placeIds per request (Routes API 625-element cap)")
+    .refine(
+      (ids) => new Set(ids).size === ids.length,
+      "placeIds must be unique — duplicate IDs would schedule the same place twice"
+    ),
 
   /**
    * Whether to reorder places by shortest-path + meal-slotting (F2).

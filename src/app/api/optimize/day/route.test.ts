@@ -204,6 +204,19 @@ describe("POST /api/optimize/day — input validation", () => {
     expect(res.status).toBe(400);
     expect(computeRouteMatrix).not.toHaveBeenCalled();
   });
+
+  it("returns 400 when placeIds contains duplicate IDs (WR-03)", async () => {
+    // Duplicate placeIds would schedule the same place twice producing an
+    // (N+1)×(N+1) matrix with two identical rows/columns — reject at schema level.
+    mockDbReturn([]);
+    const res = await POST(
+      makeRequest({ placeIds: ["ChIJp1", "ChIJp2", "ChIJp1"], reorder: false })
+    );
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: string; details?: unknown };
+    expect(body.error).toBe("Validation failed");
+    expect(computeRouteMatrix).not.toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------
