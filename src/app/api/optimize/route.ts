@@ -60,7 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(error, { status: 400 });
   }
 
-  const { placeIds, numDays, travelDate } = parsed.data;
+  const { placeIds, numDays, travelDate, durationOverrides } = parsed.data;
 
   // The optimizer's only source of resolved places is the DB cache — without a
   // configured database there is nothing to optimize.
@@ -149,7 +149,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // utcOffsetMinutes: directly from utc_offset_minutes column.
   // ------------------------------------------------------------------
   const optimizerPlaces: OptimizerPlace[] = orderedRows.map((row) => {
+    // INPUT-05: a user-supplied override takes precedence over the type-derived default.
     const visitDurationMinutes =
+      durationOverrides?.[row.place_id] ??
       row.default_visit_duration_minutes ??
       durationForTypes(row.place_types ?? []);
 

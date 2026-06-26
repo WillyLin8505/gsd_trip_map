@@ -4,6 +4,8 @@ import { textSearch, type LocationBias } from "@/lib/google/places-client";
 import { resolveMapsUrl } from "@/lib/google/url-resolver";
 import { db } from "@/lib/db";
 import { places } from "@/lib/db/schema";
+import { getUser } from "@/lib/auth/get-user";
+import { checkAndCount, subjectFor } from "@/lib/ratelimit/check";
 
 /**
  * POST /api/places/resolve
@@ -49,6 +51,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const { inputs, city, locationBias } = parsed.data;
+
+  // Rate limiting (SC2): count one lookup per input and reject over the daily cap
+  // BEFORE any Google API call. Subject = user id (logged in) or client IP.
+  // getUser() is best-effort — resolve stays usable anonymously even if auth is
+  // unconfigured (falls back to IP-based limiting).
+  let userId: string | null = null;
+  try {
+    userId = (await getUser())?.id ?? null;
+  } catch {
+    userId = null;
+  }
+  const subject = subjectFor(userId, request.headers);
+  const rate = await checkAndCount(subject, inputs.length);
+  if (!rate.allowed) {
+    const error: ErrorResponse = {
+      error: `已達每日地點查詢上限（${rate.limit} 次／日），請明天再試。`,
+    };
+    return NextResponse.json(error, { status: 429 });
+  }
 
   // Server-only API key (T-01-01) — never reference from client components
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;

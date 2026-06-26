@@ -11,6 +11,7 @@ import { ResultsLayout } from "@/components/results-layout";
 import { ProgressSteps } from "@/components/progress-steps";
 import { SaveItineraryButton } from "@/components/save-itinerary-button";
 import { usePlaceDetails } from "@/lib/places/use-place-details";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import type { ResolvedPlace } from "@/lib/validation/resolve";
 import type { OptimizeResult } from "@/types/itinerary";
 
@@ -34,8 +35,17 @@ export function PlaceInputPanel() {
   const [city, setCity] = useState<string>("");
   const [resolvedPlaces, setResolvedPlaces] = useState<ResolvedPlace[]>([]);
   const [optimizeResult, setOptimizeResult] = useState<OptimizeResult | null>(null);
+  const [durationOverrides, setDurationOverrides] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<"idle" | "resolving" | "optimizing">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  // SC3: debounce the textarea so the place-count preview doesn't recompute on
+  // every keystroke (300ms quiescence).
+  const debouncedRawInputs = useDebouncedValue(rawInputs, 300);
+  const pendingPlaceCount = debouncedRawInputs
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0).length;
 
   // Collect all scheduled placeIds after optimization so we can fetch their details
   const scheduledPlaceIds = optimizeResult
@@ -122,15 +132,19 @@ export function PlaceInputPanel() {
   // ---------------------------------------------------------------------------
   // Flow C → D: Optimize itinerary
   // ---------------------------------------------------------------------------
-  async function handleOptimize() {
+  async function handleOptimize(overrides: Record<string, number> = durationOverrides) {
     setError(null);
     setLoading("optimizing");
 
     try {
+      const hasOverrides = Object.keys(overrides).length > 0;
       const response = await fetch("/api/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ placeIds: resolvedPlaces.map((p) => p.placeId) }),
+        body: JSON.stringify({
+          placeIds: resolvedPlaces.map((p) => p.placeId),
+          ...(hasOverrides ? { durationOverrides: overrides } : {}),
+        }),
       });
 
       const data: unknown = await response.json();
@@ -150,6 +164,15 @@ export function PlaceInputPanel() {
   }
 
   // ---------------------------------------------------------------------------
+  // INPUT-05: edit a place's visit duration → re-optimize with the override
+  // ---------------------------------------------------------------------------
+  async function handleDurationChange(placeId: string, minutes: number) {
+    const next = { ...durationOverrides, [placeId]: minutes };
+    setDurationOverrides(next);
+    await handleOptimize(next);
+  }
+
+  // ---------------------------------------------------------------------------
   // Reset to step 1
   // ---------------------------------------------------------------------------
   function handleReset() {
@@ -157,6 +180,7 @@ export function PlaceInputPanel() {
     setCity("");
     setResolvedPlaces([]);
     setOptimizeResult(null);
+    setDurationOverrides({});
     setError(null);
     setLoading("idle");
   }
@@ -178,10 +202,16 @@ export function PlaceInputPanel() {
             重新輸入
           </Button>
         </div>
+        {loading === "optimizing" && (
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            重新計算行程中…
+          </p>
+        )}
         <ResultsLayout
           itinerary={optimizeResult}
           resolvedPlaces={resolvedPlaces}
           detailsById={detailsById}
+          onDurationChange={handleDurationChange}
         />
       </div>
     );
@@ -203,7 +233,7 @@ export function PlaceInputPanel() {
                 variant="ghost"
                 size="sm"
                 className="ml-2"
-                onClick={handleOptimize}
+                onClick={() => handleOptimize()}
               >
                 重試
               </Button>
@@ -224,7 +254,7 @@ export function PlaceInputPanel() {
             重新輸入
           </Button>
           <Button
-            onClick={handleOptimize}
+            onClick={() => handleOptimize()}
             disabled={resolvedPlaces.length === 0 || loading === "optimizing"}
             className="flex-1 h-11"
           >
@@ -302,6 +332,9 @@ export function PlaceInputPanel() {
           />
           <p className="text-sm text-muted-foreground">
             每行輸入一個地點名稱（中文名稱或 Google Maps 連結）
+            {pendingPlaceCount > 0 && (
+              <span className="ml-1">· 將查詢 {pendingPlaceCount} 個地點</span>
+            )}
           </p>
         </div>
 

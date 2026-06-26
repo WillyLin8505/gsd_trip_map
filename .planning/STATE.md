@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 04
-current_phase_name: auth-save
+current_phase: 05
+current_phase_name: polish-edit-cost
 status: implemented
-stopped_at: Phase 04 implemented (auth UI+OAuth, save/list, sharing); tsc clean; CI tests + operator OAuth config pending
-last_updated: "2026-06-26T17:10:00.000Z"
+stopped_at: Phase 05 Waves 1–3 implemented (duration override, rate limit, debounce); Wave 4 (375px walkthrough) needs browser; tsc clean
+last_updated: "2026-06-26T17:45:00.000Z"
 last_activity: 2026-06-26
-last_activity_desc: Implemented Phase 04 Waves 2–4 (auth foundation pre-existed); 5 API routes, 6 pages/components, 3 test files; tsc clean
+last_activity_desc: Implemented Phase 05 — INPUT-05 duration override, per-subject daily rate limit (api_usage), 300ms input debounce; tsc clean, 4 new test files
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 12
-  completed_plans: 12
-  percent: 95
+  completed_phases: 4
+  total_plans: 15
+  completed_plans: 15
+  percent: 98
 ---
 
 # Project State
@@ -28,13 +28,12 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 
 ## Current Position
 
-Phase: 03 (core-ui) — COMPLETE (UAT 2/2 pass)
-Phase: 04 (auth-save) — IMPLEMENTED (Waves 1–4); pending CI tests + operator OAuth config
-Phase: 05 (polish-edit-cost) — NEXT
-Status: Phase 04 code complete & typechecked; verification deferred to Linux/CI; needs review/commit
-Last activity: 2026-06-26 — Phase 04 implemented (auth UI, persistence, sharing)
+Phase: 04 (auth-save) — IMPLEMENTED & pushed; pending CI tests + operator OAuth config
+Phase: 05 (polish-edit-cost) — IMPLEMENTED (Waves 1–3); Wave 4 (375px walkthrough) needs browser
+Status: All 5 phases code-complete & typechecked; verification (CI tests/build + 375px) deferred
+Last activity: 2026-06-26 — Phase 05 implemented (duration override, rate limit, debounce)
 
-Progress: [█████████▒] ~95% (4/5 phases code-complete, Phase 04 pending CI verify)
+Progress: [█████████▉] ~98% (5/5 phases code-complete; CI verify + mobile UAT + migration pending)
 
 ## Verification Status
 

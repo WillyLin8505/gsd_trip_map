@@ -89,8 +89,8 @@
 | DISP-03 | Phase 3 | Complete |
 | DISP-04 | Phase 3 | Complete |
 | AUTH-01 | Phase 3 | Complete |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
-| AUTH-04 | Phase 4 | Pending |
-| AUTH-05 | Phase 4 | Pending |
-| INPUT-05 | Phase 5 | Pending |
+| AUTH-02 | Phase 4 | Code-complete (CI verify pending) |
+| AUTH-03 | Phase 4 | Code-complete (needs Google/Supabase OAuth console setup) |
+| AUTH-04 | Phase 4 | Code-complete (CI verify pending) |
+| AUTH-05 | Phase 4 | Code-complete (CI verify pending) |
+| INPUT-05 | Phase 5 | Code-complete (375px walkthrough pending) |

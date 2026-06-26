@@ -11,6 +11,8 @@ interface DayCardProps {
   day: DayEntry;
   /** Per-place detail map from use-place-details; optional — rows degrade gracefully */
   detailsById?: Map<string, PlaceDetail>;
+  /** INPUT-05: forwarded to PlaceRow to enable inline duration editing */
+  onDurationChange?: (placeId: string, minutes: number) => void;
 }
 
 /**
@@ -26,7 +28,7 @@ interface DayCardProps {
  * AUTH-01: No auth imports.
  * T-03-04: React JSX auto-escapes displayName.
  */
-export function DayCard({ day, detailsById }: DayCardProps) {
+export function DayCard({ day, detailsById, onDurationChange }: DayCardProps) {
   return (
     <Card className="bg-white border border-gray-200 shadow-sm">
       <CardHeader className="pb-2">
@@ -50,6 +52,7 @@ export function DayCard({ day, detailsById }: DayCardProps) {
                 dayNumber={day.dayNumber}
                 orderIndex={index}
                 detail={detailsById?.get(visit.placeId)}
+                onDurationChange={onDurationChange}
               />
             </li>
           ))}

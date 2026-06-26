@@ -38,6 +38,8 @@ interface ResultsLayoutProps {
    * Threaded to ItineraryView → DayCard → PlaceRow for rich row rendering.
    */
   detailsById?: Map<string, PlaceDetail>;
+  /** INPUT-05: forwarded to ItineraryView to enable inline duration editing */
+  onDurationChange?: (placeId: string, minutes: number) => void;
 }
 
 /**
@@ -69,6 +71,7 @@ export function ResultsLayout({
   itinerary,
   resolvedPlaces,
   detailsById,
+  onDurationChange,
 }: ResultsLayoutProps) {
   // Build coordinate-joined days for MapView (coordinate gap join)
   const daysWithCoords = buildDaysWithCoords(itinerary, resolvedPlaces);
@@ -99,7 +102,11 @@ export function ResultsLayout({
           </TabsList>
 
           <TabsContent value="itinerary">
-            <ItineraryView itinerary={itinerary} detailsById={detailsById} />
+            <ItineraryView
+              itinerary={itinerary}
+              detailsById={detailsById}
+              onDurationChange={onDurationChange}
+            />
           </TabsContent>
 
           <TabsContent value="map">
@@ -119,7 +126,11 @@ export function ResultsLayout({
         {/* Itinerary panel: fixed 420px width, scrollable */}
         <div className="w-[420px] flex-shrink-0">
           <ScrollArea className="h-[calc(100vh-160px)]">
-            <ItineraryView itinerary={itinerary} detailsById={detailsById} />
+            <ItineraryView
+              itinerary={itinerary}
+              detailsById={detailsById}
+              onDurationChange={onDurationChange}
+            />
           </ScrollArea>
         </div>
 

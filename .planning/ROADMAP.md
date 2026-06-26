@@ -9,8 +9,8 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 - [x] **Phase 1: Foundation + API Integration** - DB schema, Supabase auth scaffold, Google Places API with shared cache and cost controls (completed 2026-06-25)
 - [x] **Phase 2: Optimization Engine** - Server-side TSP scheduler (nearest-neighbor + 2-opt + greedy bin-packing) producing structured day-by-day output (completed 2026-06-25)
 - [x] **Phase 3: Core UI** - Full end-to-end anonymous user flow: PlaceInput, ItineraryView, MapView, mobile-responsive layout (completed 2026-06-26)
-- [ ] **Phase 4: Auth + Persistence + Sharing** - User accounts (email + Google OAuth), saved itineraries, public share links
-- [ ] **Phase 5: Polish + Edit + Cost Hardening** - Manual visit duration override, rate limiting, mobile polish, per-user API call cap
+- [x] **Phase 4: Auth + Persistence + Sharing** - User accounts (email + Google OAuth), saved itineraries, public share links (code-complete 2026-06-26; CI verify + OAuth console setup pending)
+- [x] **Phase 5: Polish + Edit + Cost Hardening** - Manual visit duration override, daily rate limiting, input debounce (code-complete 2026-06-26; 375px walkthrough + api_usage migration pending)
 
 ## Phase Details
 
@@ -140,5 +140,5 @@ Five phases, each delivering a vertical slice of working software. Phase 1 locks
 | 1. Foundation + API Integration | 4/4 | Complete   | 2026-06-25 |
 | 2. Optimization Engine | 3/3 | Complete   | 2026-06-25 |
 | 3. Core UI | 4/4 | Complete   | 2026-06-26 |
-| 4. Auth + Persistence + Sharing | 0/? | Not started | - |
-| 5. Polish + Edit + Cost Hardening | 0/? | Not started | - |
+| 4. Auth + Persistence + Sharing | 4/4 | Code-complete (CI verify pending) | 2026-06-26 |
+| 5. Polish + Edit + Cost Hardening | 3/4 | Code-complete (375px walkthrough pending) | 2026-06-26 |

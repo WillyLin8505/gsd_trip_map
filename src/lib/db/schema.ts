@@ -146,3 +146,27 @@ export const placeVisits = pgTable(
 
 export type PlaceVisit = typeof placeVisits.$inferSelect;
 export type NewPlaceVisit = typeof placeVisits.$inferInsert;
+
+/**
+ * Per-subject daily API-usage counter for rate limiting (Phase 05 / SC2).
+ *
+ * `subject` is the user_id (logged in) or the client IP (anonymous). One row per
+ * (subject, day); `count` is incremented on each place lookup and checked against
+ * a daily cap BEFORE any Google API call is made.
+ *
+ * PRIMARY KEY(subject, day) makes the increment a single idempotent upsert.
+ */
+export const apiUsage = pgTable(
+  "api_usage",
+  {
+    subject: text("subject").notNull(),
+    day: date("day").notNull(),
+    count: integer("count").notNull().default(0),
+  },
+  (table) => ({
+    pk: unique("api_usage_subject_day_key").on(table.subject, table.day),
+  })
+);
+
+export type ApiUsage = typeof apiUsage.$inferSelect;
+export type NewApiUsage = typeof apiUsage.$inferInsert;

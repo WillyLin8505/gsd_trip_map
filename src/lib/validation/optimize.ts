@@ -46,6 +46,19 @@ export const optimizeRequestSchema = z.object({
       "travelDate must be an ISO date string in YYYY-MM-DD format"
     )
     .optional(),
+
+  /**
+   * Optional per-place visit-duration overrides in minutes (INPUT-05).
+   * Maps a Google place_id to a user-chosen duration that supersedes the
+   * type-derived default. Each value is a positive integer; 15 min ≤ d ≤ 720 min
+   * bounds nonsensical inputs.
+   */
+  durationOverrides: z
+    .record(
+      z.string().min(1),
+      z.number().int().min(15, "停留時間至少 15 分鐘").max(720, "停留時間最多 12 小時")
+    )
+    .optional(),
 });
 
 export type OptimizeRequest = z.infer<typeof optimizeRequestSchema>;

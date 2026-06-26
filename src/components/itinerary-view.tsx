@@ -12,6 +12,8 @@ interface ItineraryViewProps {
    * Optional: rows degrade gracefully (only optimizer hoursUnknown flag used).
    */
   detailsById?: Map<string, PlaceDetail>;
+  /** INPUT-05: forwarded to DayCard → PlaceRow to enable inline duration editing */
+  onDurationChange?: (placeId: string, minutes: number) => void;
 }
 
 /**
@@ -26,7 +28,7 @@ interface ItineraryViewProps {
  *
  * AUTH-01: No auth imports.
  */
-export function ItineraryView({ itinerary, detailsById }: ItineraryViewProps) {
+export function ItineraryView({ itinerary, detailsById, onDurationChange }: ItineraryViewProps) {
   // Check if ALL scheduled visits have hoursUnknown=true (using optimizer flag)
   const allVisits = itinerary.days.flatMap((d) => d.visits);
   const allHoursUnknown =
@@ -47,7 +49,12 @@ export function ItineraryView({ itinerary, detailsById }: ItineraryViewProps) {
       )}
 
       {itinerary.days.map((day) => (
-        <DayCard key={day.dayNumber} day={day} detailsById={detailsById} />
+        <DayCard
+          key={day.dayNumber}
+          day={day}
+          detailsById={detailsById}
+          onDurationChange={onDurationChange}
+        />
       ))}
     </div>
   );
