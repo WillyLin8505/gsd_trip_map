@@ -170,6 +170,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       utcOffsetMinutes: row.utc_offset_minutes ?? null,
       visitDurationMinutes,
       hoursUnknown: row.hours_unknown ?? false,
+      // Thread place_types for classifyPlace (F2 auto-arrange — Pitfall 4:
+      // newly-resolved places may have null here; classifyPlace safely maps
+      // null → "attraction" which is the correct v1 fallback).
+      placeTypes: row.place_types ?? null,
     };
   });
 

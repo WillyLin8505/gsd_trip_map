@@ -49,6 +49,15 @@ export interface OptimizerPlace {
    * false → openingHours holds a valid periods array.
    */
   hoursUnknown: boolean;
+  /**
+   * Google place_types from the DB cache (places.place_types column).
+   * Used by classifyPlace (Phase 6 F2) to determine meal-slot eligibility:
+   *   - 餐廳: intersects {restaurant, food, meal_takeaway, meal_delivery}
+   *   - 點心: intersects {cafe, bakery, dessert, ice_cream_shop, bar}
+   *   - 行程: everything else (also null/missing → 行程, no meal slot)
+   * Optional — existing optimizer calls that don't do classification may omit it.
+   */
+  placeTypes?: string[] | null;
 }
 
 /**
